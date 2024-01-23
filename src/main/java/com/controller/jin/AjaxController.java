@@ -64,7 +64,7 @@ public class AjaxController {
 		service.execu(request, response);
 
 		if (session.getAttribute("verificationCode") != null) {
-			System.out.print("............verificationCode ë°ê¸ & ì¸ìsetAttribute ìë£");
+			System.out.println("............verificationCode 발급완료");
 			out.print("2000");
 		}
 	}
@@ -93,23 +93,23 @@ public class AjaxController {
 					session.removeAttribute("verificationCode");
 					session.removeAttribute("verify_nubmer");
 					
-					System.out.println("...............ì¸ì¦ ìµì¢ ìë£");
+					System.out.println("...............All sms verification SuCCESS");
 					
 					out.print("2000");
 
 				} else {
-					System.out.println("...............4ìë¦¬ ì¸ì¦ì½ë ì¼ì¹íì§ ìì");
-					out.print("ì¸ì¦ì¤í¨");
+					System.out.println("...............sms verification FAIL : CAUSE input4number != verificationCode ");
+					out.print("2001");
 				}
 
 			} else {
-				System.out.println("...............ì¸ìì verificationCode ìì");
-				out.print("ì¸ì¦ì¤í¨");
+				System.out.println("...............sms verification FAIL : CAUSE verify_nubmer = null ");
+				out.print("2001");
 			}
 
 		} else {
-			System.out.println("...............ì¸ìì verify_nubmer ìì");
-			out.print("ì¸ì¦ì¤í¨");
+			System.out.println("...............sms verification FAIL : CAUSE verificationCode = null");
+			out.print("2001");
 
 		}
 
@@ -137,11 +137,12 @@ public class AjaxController {
 	@ResponseBody 
 	public Map<String,Object> locationListPull(HttpServletRequest request, HttpServletResponse response)
 			throws IOException { 
+		
+		
 		Map<String, Object> result = new HashMap<String, Object>();
 		
-		//처리해주고 - service
-		
 		result.put("data", locationdao.readAllLocation());
+		
 		return result; //경로로 넘길게 - view
 	}
 	

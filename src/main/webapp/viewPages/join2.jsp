@@ -312,6 +312,17 @@ label {
 	opacity: 0.7;
 }
 
+.location_item_selected {
+	opacity: 0.3;
+}
+
+.location_item_selected:hover {
+	opacity: 0.3;
+}
+
+.displayNone {
+	display: none;
+}
 /* location 선택 창 관련 CSS */
 /* location 선택 창 관련 CSS */
 /* location 선택 창 관련 CSS */
@@ -322,7 +333,7 @@ label {
 	<div class="login_box">
 		<div class="inner_container">
 			<div class="row_box row1">회원가입</div>
-			<form action="#" method="post">
+			<form action="#" method="post" id="join_form">
 				<div class="main_form">
 
 					<div class="item column1">
@@ -432,13 +443,13 @@ label {
 							for="user_location" class="check_message"></label>
 					</div>
 					<div class="item column3 column3_location">
-						<div class="location_check_wrapper">
+						<div class="location_check_wrapper displayNone">
 							<img class="tri1"
 								src="${pageContext.request.contextPath}/images/tri1.svg">
 							<img class="tri2"
 								src="${pageContext.request.contextPath}/images/tri2.svg">
 							<div class="location_check_window">
-								<div class="location_row1">관심장소를 추가해주세요</div>
+								<div class="location_row1">관심장소를 추가해주세요 (토글, 최대3개)</div>
 								<div class="location_row2"></div>
 								<div class="location_row3"></div>
 
@@ -479,7 +490,6 @@ let pass_ok = false;
 let pass2_ok = false;
 let phone_ok = false;
 let phone_verify_ok = false;
-let location_ok = false;
 
 
 let email_form = document.querySelector("#user_id");
@@ -500,6 +510,8 @@ let timerDisplay = document.querySelector(".timerDisplay");
 let sms_row1 = document.querySelector(".sms_row1");
 let btn_sms4 = document.querySelector(".btn_sms4");
 
+
+let lcw = document.querySelector(".location_check_wrapper");
 let lcb = document.querySelector(".location_check_button");
 
 
@@ -532,6 +544,7 @@ email_form.addEventListener("input", () =>{
           email_form_label_Check.appendChild(success);
 
           id_ok = true;
+          id_verify_ok = false;
 
         } else {
           email_form_label_Check.innerHTML = "";
@@ -546,10 +559,12 @@ email_form.addEventListener("input", () =>{
           email_form_label_Check.appendChild(fail);
 
           id_ok = false;
+          id_verify_ok = false;
         }
       } else {
         email_form_label_Check.innerHTML = "";
         id_ok = false;
+        id_verify_ok = false;
       }
 
 });
@@ -584,6 +599,8 @@ id_check_btn.addEventListener("click",function(){
 				          success.innerHTML = "<i class='fa-regular fa-circle-check'></i>";
 				          success.classList.add("check_success");
 				          email_form_label_Check.appendChild(success);
+				          
+				          id_verify_ok = true;
 						
 					}else{
 												
@@ -598,7 +615,7 @@ id_check_btn.addEventListener("click",function(){
 				          fail.classList.add("check_fail");
 				          email_form_label_Check.appendChild(fail);
 
-						
+				          id_verify_ok = false;
 						
 						
 					}
@@ -872,6 +889,7 @@ phone_form.addEventListener("input", () =>{
           phone_form_label_Check.appendChild(fail);
 
           phone_ok = false;
+          
         }
       } else {
         phone_form_label_Check.innerHTML = "";
@@ -887,7 +905,7 @@ pcb.addEventListener("click", () => {
    if(phone_ok){
 	   
 	   scw.style.display = "initial";
-	   /*
+	   
 	   $.ajax({
 			url : "sendsmsverify.jin",
 			type : "POST",
@@ -933,7 +951,7 @@ pcb.addEventListener("click", () => {
 			}
 		});
 	   
-	   */
+	   
 	   
    }else{
 		phone_form_label_Check.innerHTML = "";
@@ -946,6 +964,8 @@ pcb.addEventListener("click", () => {
         fail.innerHTML = "<i class='fa-regular fa-circle-xmark'></i>";
         fail.classList.add("check_fail");
         phone_form_label_Check.appendChild(fail);
+        
+        
   }
 });
 
@@ -998,8 +1018,17 @@ btn_sms4.addEventListener("click", () => {
 
 
 //9. 관심장소 추가하기
-//9-1. 관심장소 리스트 아작스로 불러오기
-//location_row2
+//9-1. 관심장소 버튼 토글
+lcb.addEventListener("click", () => {
+	if (lcw.classList.contains("displayNone")) {
+		lcw.classList.remove("displayNone");
+	}else{
+		lcw.classList.add("displayNone");
+	}
+});
+//9-2. 관심장소 리스트 아작스로 불러오기
+let location_row2 = document.querySelector(".location_row2");
+let selectedNum=0;
 $.ajax({
 			url : "locationListPull.jin",
 			type : "POST",
@@ -1007,44 +1036,93 @@ $.ajax({
 			error : function(xhr, status, msg) {
 				alert("오류가 발생했습니다. 관리자에게 문의해주세요.\n"+"status : "+status + "/n" +"msg : "+ msg);
 			},
-			success : function(data){
-				console.log(data);
-				/*
-				if(data=="2000"){
-					clearInterval(phone_4number_verify_timer);
-					console.log("문자인증 과정 최종 통과!!");
-					scw.style.display = "none";
-					phone_verify_ok = true;
-					
-					let p = document.createElement("p");
-			        p.innerHTML = "휴대폰 본인 인증 완료!";
-			        p.classList.add("success");
-			        phone_form_label_Check.innerHTML="";
-			        phone_form_label_Check.appendChild(p);
-					
-					let success = document.createElement("div");
-			        success.innerHTML = "<i class='fa-regular fa-circle-check'></i>";
-			        success.classList.add("check_success");
-			        phone_form_label_Check.appendChild(success);
-					
-				}else{
-					phone_verify_ok = false;
-					sms_row1.innerHTML ="인증번호가 일치하지 않습니다. 다시 확인해주세요";
-				}
-				*/
+			success : function(json){
+				json.data.forEach((item) => {
+					let div = document.createElement("div");
+			        div.innerHTML = item.location_name;
+			        div.classList.add("location_item");
+			        location_row2.appendChild(div);
+			       
+			        div.addEventListener("click",function(){
+			        	if (div.classList.contains("location_item_selected")) {
+			        		
+			        		if(location_form.value.includes(div.innerHTML+", ")){
+			        			 location_form.value=location_form.value.replace(div.innerHTML+", ","");
+			        			  }else if(location_form.value.includes(", "+div.innerHTML)){
+			        			 location_form.value=location_form.value.replace(", "+div.innerHTML,"");
+			        			  }else{
+			        				  location_form.value=location_form.value.replace(div.innerHTML,"");
+			        			  }
+			        		div.classList.remove("location_item_selected");
+			        		 selectedNum--;
+			        	  } else {
+			        	   
+			        		  if(selectedNum<3){
+			        			  
+			        			  if(selectedNum==0){
+				        			  location_form.value=div.innerHTML;
+			        			  }else if(selectedNum>=1){
+				        			  location_form.value=location_form.value+", "+div.innerHTML;
+			        			  }
+			        			 div.classList.add("location_item_selected");
+			        		  selectedNum++;
+			        		  
+			        		  }
+			        	  }
+			        	console.log(selectedNum);
+			        	
+			        });
+			        
+					});
+				
 			}
 		});
 
 
 
-
-
-lcb.addEventListener("click", () => {
-
-
-
-});
-
+//최종 폼 제출
+let join_form = document.getElementById("join_form");
+join_form.addEventListener('submit', function(event) {
+	
+	if(!id_ok ){
+		alert("아이디 입력을 확인해주세요.");
+		event.preventDefault();
+		return;
+	}
+	if(!id_verify_ok ){
+		alert("아이디 입력을 확인해주세요.");
+		event.preventDefault();
+		return;
+	}
+	if(!name_ok ){
+		alert("이름 입력을 확인해주세요.");
+		event.preventDefault();
+		return;
+	}
+	if(!nick_ok ){
+		alert("nick 입력을 확인해주세요.");
+		event.preventDefault();
+		return;
+	}
+	if(!pass_ok ){
+		alert("pass 입력을 확인해주세요.");
+		event.preventDefault();
+		return;
+	}
+	if(!phone_ok ){
+		alert("phone_ok 입력을 확인해주세요.");
+		event.preventDefault();
+		return;
+	}
+	if(!phone_verify_ok ){
+		alert("phone_verify_ok 입력을 확인해주세요.");
+		event.preventDefault();
+		return;
+	}
+	
+    
+    
+  });
 
 
 

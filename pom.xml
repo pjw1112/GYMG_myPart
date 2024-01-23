@@ -296,65 +296,13 @@
 		<!-- HikariCP -->
 
 
-		<!-- jaxb-api -->
-		<!-- jaxb-api -->
-		<!-- jaxb-api -->
-		<!-- https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api -->
-		<dependency>
-			<groupId>javax.xml.bind</groupId>
-			<artifactId>jaxb-api</artifactId>
-			<version>2.3.1</version>
-		</dependency>
-		<!-- jaxb-api -->
-		<!-- jaxb-api -->
-		<!-- jaxb-api -->
-
-
-		<!-- jaxb-core -->
-		<!-- jaxb-core -->
-		<!-- jaxb-core -->
-		<!-- https://mvnrepository.com/artifact/org.glassfish.jaxb/jaxb-core -->
-		<dependency>
-			<groupId>org.glassfish.jaxb</groupId>
-			<artifactId>jaxb-core</artifactId>
-			<version>2.3.0.1</version>
-		</dependency>
-		<!-- jaxb-core -->
-		<!-- jaxb-core -->
-		<!-- jaxb-core -->
-
-
-		<!-- jaxb-impl -->
-		<!-- jaxb-impl -->
-		<!-- jaxb-impl -->
-		<!-- https://mvnrepository.com/artifact/com.sun.xml.bind/jaxb-impl -->
-		<dependency>
-			<groupId>com.sun.xml.bind</groupId>
-			<artifactId>jaxb-impl</artifactId>
-			<version>2.3.1</version>
-		</dependency>
-		<!-- jaxb-impl -->
-		<!-- jaxb-impl -->
-		<!-- jaxb-impl -->
 
 		<dependency>
 			<groupId>net.nurigo</groupId>
 			<artifactId>sdk</artifactId>
 			<version>4.3.0</version>
 		</dependency>
-		<!-- 
-		<dependency>
-			<groupId>javax.activation</groupId>
-			<artifactId>javax.activation-api</artifactId>
-			<version>1.2.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpclient</artifactId>
-			<version>4.5.2</version>
-			
-		</dependency>
-		 -->
+		
 	</dependencies>
 	<build>
 		<plugins>

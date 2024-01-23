@@ -9,6 +9,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class LocationDto {
 	private int location_no;
-	private int user_no;
 	private String location_name;
 }
