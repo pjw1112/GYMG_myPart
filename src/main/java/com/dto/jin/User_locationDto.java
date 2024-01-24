@@ -10,7 +10,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class LocationDto {
+public class User_locationDto {
+ 
+	private int user_location_no;
+	private int user_no;
 	private int location_no;
-	private String location_name;
 }

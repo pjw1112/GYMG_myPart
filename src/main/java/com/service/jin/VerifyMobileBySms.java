@@ -2,6 +2,7 @@ package com.service.jin;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Map;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -33,7 +34,7 @@ public class VerifyMobileBySms implements JService {
 	}
 
 	@Override
-	public void execu(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	public int execu(Map<String, Object> item, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		
 		HttpSession session = request.getSession();
@@ -71,10 +72,11 @@ public class VerifyMobileBySms implements JService {
 				}
 			}, 5 * 60 * 1000); // 5분 타이머
 			
+			return 1;
 			
 		}
 		
-		
+		return 0;
 	}
 
 }

@@ -333,7 +333,7 @@ label {
 	<div class="login_box">
 		<div class="inner_container">
 			<div class="row_box row1">회원가입</div>
-			<form action="#" method="post" id="join_form">
+			<form action="join_user_form_transfer.jin" method="post" id="join_form">
 				<div class="main_form">
 
 					<div class="item column1">
@@ -698,7 +698,7 @@ name_form.addEventListener("input", () => {
 
 
 //3. 닉네임 조건 확인
-let nickPattern = /^[A-Za-z가-힣ㄱ-ㅎ@!_\-&~]+$/;
+let nickPattern = /^[A-Za-z가-힣ㄱ-ㅎ0-9@!_\-&~]+$/;
 nick_form.addEventListener("input", () => {
 	  if (nick_form.value.length != 0) {
 	    if (2 <= nick_form.value.length && nick_form.value.length <= 15) {
@@ -719,7 +719,7 @@ nick_form.addEventListener("input", () => {
 	      }else{
 	    	  nick_form_label_Check.innerHTML = "";
 		      let p = document.createElement("p");
-		      p.innerHTML = "닉네임은 한글,영문,특수문자 @!_-&~ 만 허용됩니다 ";
+		      p.innerHTML = "닉네임은 한글,영문,숫자,특수문자 @!_-&~ 만 허용됩니다 ";
 		      p.classList.add("fail");
 		      nick_form_label_Check.appendChild(p);
 
@@ -977,7 +977,7 @@ btn_sms4.addEventListener("click", () => {
 
 	if(sms_4number.value.length ==4){
 		console.log("4넘버 일치체크");
-		
+		/*
 		$.ajax({
 			url : "receivesmsverify.jin",
 			type : "POST",
@@ -989,8 +989,11 @@ btn_sms4.addEventListener("click", () => {
 				alert("오류가 발생했습니다. 관리자에게 문의해주세요.\n"+"status : "+status + "/n" +"msg : "+ msg);
 			},
 			success : function(data){
+				
 				console.log(data);
 				if(data=="2000"){
+				*/
+				
 					clearInterval(phone_4number_verify_timer);
 					console.log("문자인증 과정 최종 통과!!");
 					scw.style.display = "none";
@@ -1006,13 +1009,19 @@ btn_sms4.addEventListener("click", () => {
 			        success.innerHTML = "<i class='fa-regular fa-circle-check'></i>";
 			        success.classList.add("check_success");
 			        phone_form_label_Check.appendChild(success);
-					
+			        
+				/*
+				
 				}else{
 					phone_verify_ok = false;
 					sms_row1.innerHTML ="인증번호가 일치하지 않습니다. 다시 확인해주세요";
 				}
+				
+				
 			}
 		});
+		
+			        */
 	}
 });
 
@@ -1083,43 +1092,73 @@ $.ajax({
 //최종 폼 제출
 let join_form = document.getElementById("join_form");
 join_form.addEventListener('submit', function(event) {
+	event.preventDefault();
 	
 	if(!id_ok ){
 		alert("아이디 입력을 확인해주세요.");
-		event.preventDefault();
+		
 		return;
 	}
 	if(!id_verify_ok ){
 		alert("아이디 입력을 확인해주세요.");
-		event.preventDefault();
+		
 		return;
 	}
 	if(!name_ok ){
 		alert("이름 입력을 확인해주세요.");
-		event.preventDefault();
+		
 		return;
 	}
 	if(!nick_ok ){
 		alert("nick 입력을 확인해주세요.");
-		event.preventDefault();
+		
 		return;
 	}
 	if(!pass_ok ){
 		alert("pass 입력을 확인해주세요.");
-		event.preventDefault();
+		
 		return;
 	}
 	if(!phone_ok ){
 		alert("phone_ok 입력을 확인해주세요.");
-		event.preventDefault();
+		
 		return;
 	}
 	if(!phone_verify_ok ){
 		alert("phone_verify_ok 입력을 확인해주세요.");
-		event.preventDefault();
+		
 		return;
 	}
 	
+	$.ajax({
+		url : "join_user_form_transfer.jin",
+		type : "POST",
+		dataType : "json",
+		data : {
+			"user_id" : email_form.value,
+			"user_name" : name_form.value,
+			"user_nick" : nick_form.value,
+			"user_pw" : pass_form.value,
+			"user_phone" : phone_form.value,
+			"user_location" : location_form.value,
+		},
+		/*
+		let email_form = document.querySelector("#user_id");
+		let name_form = document.querySelector("#user_name");
+		let nick_form = document.querySelector("#user_nick");
+		let pass_form = document.querySelector("#user_pw");
+		let pass2_form = document.querySelector("#user_pw2");
+		let phone_form = document.querySelector("#user_phone");
+		let sms_4number = document.querySelector("#sms_4number");
+		let location_form = document.querySelector("#user_location");
+		*/
+		error : function(xhr, status, msg) {
+			alert("오류가 발생했습니다. 관리자에게 문의해주세요.\n"+"status : "+status + "/n" +"msg : "+ msg);
+		},
+		success : function(json){
+			console.log(json);
+		}
+	});
     
     
   });

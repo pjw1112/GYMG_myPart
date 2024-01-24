@@ -5,8 +5,9 @@
 <mapper namespace="com.dao.jin.LocationDao">
 
 	<select id="readAllLocation" resultType="LocationDto">
-		select * from location order by location_no asc
+		select * from location
+		order by location_no asc
 	</select>
-
+	
 
 </mapper>

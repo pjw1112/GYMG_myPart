@@ -4,9 +4,9 @@
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.dao.jin.UserDao">
 
-	<insert id="insert" parameterType="UserDto">
-		insert into userinfo (name,
-		age) values (#{name}, #{age})
+	<insert id="insert" parameterType="UserDto" >
+		insert into user (user_id, user_name, user_nick, user_pw, user_phone, user_ip ) 
+		values (#{user_id}, #{user_name}, #{user_nick}, #{user_pw}, #{user_phone}, #{user_ip})
 	</insert>
 	<update id="update" parameterType="UserDto">
 		update userinfo set
@@ -19,6 +19,12 @@
 	<select id="duplicateIdCheck" resultType="int">
 		select count(*) from user where user_id=#{user_id}
 	</select>
+	
+	
+	<select id="read_user_no" resultType="UserDto">
+		select * from user where user_id=#{user_id}
+	</select>
+	
 	<select id="readAll" resultType="UserDto">
 		select * from user order by user_no desc
 	</select>

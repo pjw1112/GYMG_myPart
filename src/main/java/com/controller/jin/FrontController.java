@@ -1,31 +1,27 @@
 package com.controller.jin;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Random;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.dao.TestDao;
+import com.dto.jin.UserDto;
 import com.service.jin.JService;
-import com.service.jin.VerifyMobileBySms;
+import com.service.jin.User_Insert;
 
 import lombok.extern.log4j.Log4j;
-import net.nurigo.sdk.NurigoApp;
-import net.nurigo.sdk.message.model.Message;
-import net.nurigo.sdk.message.request.SingleMessageSendingRequest;
-import net.nurigo.sdk.message.response.SingleMessageSentResponse;
-import net.nurigo.sdk.message.service.DefaultMessageService;
 
 @Controller("jin-controller")
 @Log4j
@@ -121,15 +117,13 @@ public class FrontController {
 	
 	
 	
+	
+	
+	
 	@RequestMapping(value = "/pageleave.jin", method = { RequestMethod.GET, RequestMethod.POST })
 	public void pageleave() {
-		System.out.println("...............사용자가 회원가입 페이지를 떠남");
+		log.info("...............사용자가 회원가입 페이지를 떠남");
 	}
-	
-	
-	
-	
-	
-	
+		
 
 }

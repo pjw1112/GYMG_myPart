@@ -25,8 +25,7 @@
 		<property name="username" value="${db.username}"></property>
 		<property name="password" value="${db.password}"></property>
 	</bean>
-	<bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource"
-		destroy-method="close">
+	<bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
 		<constructor-arg ref="hikariConfig" />
 	</bean>
 	<!-- HikariCP -->
@@ -46,11 +45,12 @@
 		<property name="mapperLocations">
 			<list>
 				<value>classpath:/config/test-mapper.xml</value>
-		   <!-- <value>classpath:/config/hwan_mapper/your_mapper_name.xml</value> -->
-		    <value>classpath:/config/jin_mapper/user-mapper.xml</value>
-		    <value>classpath:/config/jin_mapper/location-mapper.xml</value>
-		    <!-- <value>classpath:/config/moon_mapper/your_mapper_name.xml</value> -->
-		   <!-- <value>classpath:/config/ye_mapper/your_mapper_name.xml</value>   -->
+				<!-- <value>classpath:/config/hwan_mapper/your_mapper_name.xml</value> -->
+				<value>classpath:/config/jin_mapper/user-mapper.xml</value>
+				<value>classpath:/config/jin_mapper/location-mapper.xml</value>
+				<value>classpath:/config/jin_mapper/user-location-mapper.xml</value>
+				<!-- <value>classpath:/config/moon_mapper/your_mapper_name.xml</value> -->
+				<!-- <value>classpath:/config/ye_mapper/your_mapper_name.xml</value> -->
 			</list>
 		</property>
 	</bean>
@@ -70,6 +70,17 @@
 	<!-- sqlSessionTemplate -->
 	<!-- sqlSessionTemplate -->
 
+	<!-- tx -->
+	<!-- tx -->
+	<!-- tx -->
+	<bean id="dataSourceTransaction"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+	<tx:annotation-driven />
+	<!-- tx -->
+	<!-- tx -->
+	<!-- tx -->
 
 	<!-- MapperScanner -->
 	<!-- MapperScanner -->

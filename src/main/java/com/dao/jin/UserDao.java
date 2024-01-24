@@ -13,5 +13,6 @@ public interface UserDao {
 	public int delete(UserDto dto);
 	public int duplicateIdCheck(UserDto dto);
 	public UserDto read(UserDto dto);
+	public UserDto read_user_no(UserDto dto);
 	public List<UserDto> readAll();
 }

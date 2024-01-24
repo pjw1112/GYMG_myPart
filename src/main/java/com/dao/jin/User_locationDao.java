@@ -7,8 +7,7 @@ import com.dto.jin.LocationDto;
 import com.dto.jin.User_locationDto;
 
 @MyDao
-public interface LocationDao {
+public interface User_locationDao {
 
-	public List<LocationDto> readAllLocation();
-	
+	public int insert(User_locationDto user_locationdto);
 }
