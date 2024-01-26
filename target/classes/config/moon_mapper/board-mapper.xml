@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.moon.BoardDao">
+	<!-- 게시글 작성 -->
+	<insert id="insertBoard" parameterType="BoardDto">
+		insert into board 
+		(ctg_no, user_no, board_title, board_content, board_nick, board_ip)
+		values 
+		(#{ctg_no}, #{user_no}, #{board_title}, #{board_content}, (select user_nick from user where user_no = #{user_no}), #{board_ip});
+	</insert>
+	
+	<!-- paging -->
+	<select id="listCnt" resultType="int" parameterType="java.util.HashMap">
+		<choose>
+			<when test="key == 'title'"><bind name="title" value="'%' + value + '%'"/></when>
+			<when test="key == 'nickname'"><bind name="nickname" value="'%' + value + '%'"/></when>
+			<when test="key == 'content'"><bind name="content" value="'%' + value + '%'"/></when>
+		</choose>  
+		select count(*) from board 
+			where ctg_no = #{ctg_no} 
+			<if test="title != null and title != ''">
+		      AND board_title LIKE #{title}
+		    </if>
+		    <if test="nickname != null and nickname != ''">
+		      AND board_nick LIKE #{nickname}
+		    </if>
+		    <if test="content != null and content != ''">
+		      AND board_content LIKE #{content}
+		    </if>
+	</select>
+
+  <!-- 자유게시판, 맛집게시판 전체검색 및 제목 검색 결과 -->
+	<select id="boardList" resultType="BoardDto" parameterType="java.util.HashMap">
+		 <choose>
+			<when test="key == 'title'"><bind name="title" value="'%' + value + '%'"/></when>
+			<when test="key == 'nickname'"><bind name="nickname" value="'%' + value + '%'"/></when>
+			<when test="key == 'content'"><bind name="content" value="'%' + value + '%'"/></when>
+		</choose>   
+		  SELECT b.*, (SELECT COUNT(*) FROM board_like l WHERE l.board_no = b.board_no) AS like_count
+		  FROM board b
+		  LEFT JOIN board_like l ON b.board_no = l.board_no
+		  WHERE b.ctg_no = #{ctg_no}
+		    <if test="title != null and title != ''">
+		      AND b.board_title LIKE #{title}
+		    </if>
+		    <if test="nickname != null and nickname != ''">
+		      AND b.board_nick LIKE #{nickname}
+		    </if>
+		    <if test="content != null and content != ''">
+		      AND b.board_content LIKE #{content}
+		    </if>
+		  ORDER BY b.board_no DESC
+		  LIMIT #{pstartno}, #{onepagelimit}
+	</select>
+	
+	
+
+
+	<!-- 게시판 싱글페이지 보이기 -->
+	<select id="readOneBoard" resultType="BoardResultDto" parameterType="BoardResultDto">
+		SELECT b.*, (SELECT COUNT(*) FROM board_like l WHERE l.board_no = b.board_no) AS like_count, r.*
+		FROM board b
+		LEFT JOIN board_like l ON b.board_no = l.board_no
+		LEFT JOIN board_reply r ON b.board_no = r.board_no
+		WHERE b.board_no = #{board_no};
+	</select>
+	
+	
+	<!-- 게시판 조회수 올리기 -->
+ 	<update id="updateBoardHit" parameterType="BoardResultDto">
+		update board set board_hit = board_hit + 1 where board_no = #{board_no}
+	</update> 
+	
+	<!-- 게시글 수정 -->
+ 	<update id="updateBoard" parameterType="BoardResultDto">
+		update board 
+		set board_title = #{board_title}, board_content = #{board_content}
+		where board_no = #{board_no}
+	</update> 
+	
+	
+	<!-- 게시글 삭제 -->
+ 	<delete id="deleteBoard" parameterType="BoardDto">
+		delete from board where board_no = #{board_no}
+	</delete> 
+	
+	
+	
+	<!-- 게시판 좋아요 -->
+ 	<update id="updateBoardLike" parameterType="BoardDto">
+		update board set board_like = board_like + 1 where board_no = #{board_no}
+	</update>
+
+	<!-- 게시판 좋아요 취소 -->
+ 	<update id="updateBoardLikeCancle" parameterType="BoardDto">
+		update board set board_like = board_like - 1 where board_no = #{board_no}
+	</update> 
+	
+	
+</mapper>

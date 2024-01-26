@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.ye.RestDao">
+	<select id="listRestInfo" resultType="RestInfoDto">
+		SELECT * FROM restaurant
+		ORDER BY rest_no DESC
+	</select>
+	<resultMap id="restInfoMap" type="RestInfoDto">
+		<id property="rest_no" column="rest_no" />
+		<result property="ctg_no" column="ctg_no" />
+		<result property="rest_name" column="rest_name" />
+		<result property="rest_desc" column="rest_desc" />
+		<result property="rest_address" column="rest_address" />
+		<result property="rest_address2" column="rest_address2" />
+		<result property="rest_tel" column="rest_tel" />
+		<result property="rest_time" column="rest_time" />
+		<result property="ctg_name" column="ctg_name" />
+	</resultMap>
+	<select id="readRestInfo" resultMap="restInfoMap">
+		SELECT
+		r.rest_no, r.ctg_no, r.rest_name, r.rest_desc, r.rest_address, r.rest_address2, r.rest_tel, r.rest_time,
+		rc.ctg_name
+		FROM restaurant r JOIN rest_category rc USING(ctg_no)
+		WHERE r.rest_no = #{rest_no}
+	</select>
+	<select id="readRestBiz" resultType="RestBizDto"
+		parameterType="int">
+		SELECT * FROM rest_biz WHERE rest_no = #{rest_no} ORDER
+		BY biz_day
+	</select>
+	<select id="listMenu" resultType="MenuDto" parameterType="int">
+		SELECT
+		* FROM menu WHERE rest_no = #{rest_no} ORDER BY menu_no asc
+	</select>
+	
+	
+	
+	
+	<select id="checkAdminPw" resultType="string">
+		SELECT user_pw from user WHERE type_no = 1
+	</select>
+	<delete id="deleteRestInfo" parameterType="int">
+		DELETE FROM restaurant WHERE rest_no = #{rest_no}
+	</delete>
+
+</mapper>
