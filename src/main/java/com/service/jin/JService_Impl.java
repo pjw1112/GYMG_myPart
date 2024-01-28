@@ -91,7 +91,7 @@ public class JService_Impl implements JService {
 					session.removeAttribute("verificationCode");
 					session.removeAttribute("verify_nubmer");
 				}
-			}, 5 * 60 * 1000); 
+			}, 5 * 60 * 1000);
 
 			return 1;
 
@@ -142,7 +142,6 @@ public class JService_Impl implements JService {
 			String[] locationList = { "서초구", "강남구", "종로구", "중구", "용산구", "성동구", "중랑구", "성북구", "도봉구", "노원구", "은평구",
 					"서대문구", "강서구", "구로구", "금천구", "영등포구", "동작구", "관악구", "광진구", "동대문구", "마포구", "양천구", "강동구" };
 
-
 			String[] locationArray = location.split(", ");
 			System.out.println("......location_before : " + locationArray.toString());
 			for (int i = 0; i < locationArray.length; i++) {
@@ -179,65 +178,95 @@ public class JService_Impl implements JService {
 //	user_duplicateIdCheck	
 //	user_duplicateIdCheck
 
-//	normal_login
-//	normal_login
-//	normal_login
+//	user_login
+//	user_login
+//	user_login
 	@Override
-	public int normal_login(Map<String, Object> item, HttpServletRequest request, HttpServletResponse response)
+	public int user_login(Map<String, Object> item, HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
 
 		HttpSession session = request.getSession();
-		
+
 		userdto = (UserDto) item.get("userdto");
 		String login_type = (String) item.get("login_type");
 		String remember_id = (String) item.get("remember_id");
 		String remember_login = (String) item.get("remember_login");
 
 		if (login_type.equals("1")) {
-			if (userdao.user_normal_login(userdto) != null) {
-				
-				UserDto login_user_dto = userdao.user_normal_login(userdto);
-				
-				session.setAttribute("login_user_dto", login_user_dto);		
-				
-				System.out.println("remember_id : "+remember_id);
-				System.out.println("remember_login : "+remember_login);
-				if( remember_id.equals("true")) {
+			if (userdao.user_login(userdto) != null) {
+
+				UserDto login_user_dto = userdao.user_login(userdto);
+
+				session.setAttribute("login_user_dto", login_user_dto);
+
+				System.out.println("remember_id : " + remember_id);
+				System.out.println("remember_login : " + remember_login);
+
+				if (remember_id.equals("true")) {
 					Cookie cookie = new Cookie("remember_id", login_user_dto.getUser_id());
-					cookie.setMaxAge(10 * 24 * 60 * 60);  // 유효기간 10일 
+					cookie.setMaxAge(10 * 24 * 60 * 60); // 유효기간 10일
 					response.addCookie(cookie);
-					System.out.println(".....remember_id check true // MAKE SUCCEESS COOKIE : remember_id "+login_user_dto.getUser_id());
-				}else {
+					System.out.println(".....remember_id check true // MAKE SUCCEESS COOKIE : remember_id "
+							+ login_user_dto.getUser_id());
+				} else {
 					// 쿠키 삭제
-			        Cookie[] cookies = request.getCookies();
-			        if (cookies != null) {
-			            for (Cookie cookie : cookies) {
-			                if ("remember_id".equals(cookie.getName())) {
-			                    cookie.setMaxAge(0); // 쿠키 삭제
-			                    response.addCookie(cookie);
-			                    System.out.println(".....remember_id check false // DELETE COOKIE : remember_id "+login_user_dto.getUser_id());
-			                }
-			            }
-			        }
-				}
-				
-				if( remember_login.equals("true")) {
-					Cookie cookie = new Cookie("remember_login", login_user_dto.getUser_id());
-					cookie.setMaxAge(10 * 24 * 60 * 60);  // 유효기간 10일
-					response.addCookie(cookie);
-					System.out.println(".....remember_login check true // MAKE SUCCEESS COOKIE : remember_login "+login_user_dto.getUser_id());
+					Cookie[] cookies = request.getCookies();
+					if (cookies != null) {
+						for (Cookie cookie : cookies) {
+							if ("remember_id".equals(cookie.getName())) {
+								cookie.setMaxAge(0); // 쿠키 삭제
+								response.addCookie(cookie);
+								System.out.println(".....remember_id check false // DELETE COOKIE : remember_id "
+										+ login_user_dto.getUser_id());
+							}
+						}
+					}
 				}
 
-				
+				if (remember_login.equals("true")) {
+					Cookie cookie = new Cookie("remember_login", login_user_dto.getUser_id());
+					cookie.setMaxAge(10 * 24 * 60 * 60); // 유효기간 10일
+					response.addCookie(cookie);
+					System.out.println(".....remember_login check true // MAKE SUCCEESS COOKIE : remember_login "
+							+ login_user_dto.getUser_id());
+				}
 				return 1;
 			}
+
+		} else {
+
+			if (userdao.user_login(userdto) == null) {
+				
+				if (userdao.insert(userdto) > 0) {
+					System.out.println("...sns최초 로그인 : user inert SUCCESS");
+					UserDto login_user_dto = userdao.user_login(userdto);
+					if (login_user_dto != null) {
+						session.setAttribute("login_user_dto", login_user_dto);
+						System.out.println("...sns최초 로그인 : user login SUCCESS");
+						return 1;
+					}
+				} else {
+					System.out.println("...sns최초 로그인 : user inert FAIL");
+				}
+
+			} else {
+				UserDto login_user_dto = userdao.user_login(userdto);
+				if (login_user_dto != null) {
+					session.setAttribute("login_user_dto", login_user_dto);
+					System.out.println("...sns후속 로그인 : user login SUCCESS");
+					return 1;
+				}
+
+			}
+
 		}
+
 		return 0;
 	}
-//	normal_login
-//	normal_login
-//	normal_login
+//	user_login
+//	user_login
+//	user_login
 
 //	cookie_login
 //	cookie_login
@@ -246,37 +275,91 @@ public class JService_Impl implements JService {
 	public int cookie_login(Map<String, Object> item, HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		
+
 		try {
-		HttpSession session = request.getSession();
-		
-		userdto.setUser_id((String) item.get("remember_login"));
-		
-		UserDto login_user_dto =userdao.read_user_no(userdto);
-		
-		if(userdto != null) {
-			session.setAttribute("login_user_dto", login_user_dto);
-			
-		}
-			
-		Cookie cookie = new Cookie("remember_login", login_user_dto.getUser_id());
-		cookie.setMaxAge(10 * 24 * 60 * 60);  // 유효기간 10일
-		response.addCookie(cookie);
-		System.out.println(".....remember_login check true // MAKE SUCCEESS COOKIE : remember_login "+login_user_dto.getUser_id());
-		return 1;
-		}catch (Exception e) {
+			HttpSession session = request.getSession();
+
+			userdto.setUser_id((String) item.get("remember_login"));
+
+			UserDto login_user_dto = userdao.read_user_no(userdto);
+
+			if (userdto != null) {
+				session.setAttribute("login_user_dto", login_user_dto);
+
+			}
+
+			Cookie cookie = new Cookie("remember_login", login_user_dto.getUser_id());
+			cookie.setMaxAge(10 * 24 * 60 * 60); // 유효기간 10일
+			response.addCookie(cookie);
+			System.out.println(".....remember_login check true // MAKE SUCCEESS COOKIE : remember_login "
+					+ login_user_dto.getUser_id());
+			return 1;
+		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
 			return 0;
 		}
-		
-		
-		
-		
+
 	}
 //	cookie_login
 //	cookie_login
 //	cookie_login
+
+	
+	
+//	find_id	
+//	find_id	
+//	find_id	
+	@Override
+	public int find_id(Map<String, Object> item, HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		
+		userdto = (UserDto) item.get("userdto");
+		
+		if(userdao.find_id(userdto) != null ) {
+			
+			UserDto result = userdao.find_id(userdto);
+			request.setAttribute("find_id_result", result.getUser_id());
+			
+			return 1;
+		}
+		
+		return 0;
+	}
+//	find_id	
+//	find_id	
+//	find_id	
+
+	
+//	update_pw	
+//	update_pw	
+//	update_pw	
+	@Override
+	public int update_pw(Map<String, Object> item, HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		
+		userdto = (UserDto) item.get("userdto");
+		
+		if(userdao.updatepw(userdto) > 0 ) {
+			
+			return 1;
+		}
+		
+		return 0;
+	}
+//	update_pw	
+//	update_pw	
+//	update_pw	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	

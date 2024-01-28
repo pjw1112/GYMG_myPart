@@ -11,6 +11,14 @@
 		(#{ctg_no}, #{user_no}, #{board_title}, #{board_content}, (select user_nick from user where user_no = #{user_no}), #{board_ip});
 	</insert>
 	
+	<!-- 공지사항  -->
+	<select id="noticeList" resultType="BoardDto" parameterType="int">
+		 SELECT b.*, (SELECT COUNT(*) FROM board_like l WHERE l.board_no = b.board_no) AS like_count
+		  FROM board b
+		  LEFT JOIN board_like l ON b.board_no = l.board_no
+		  WHERE b.ctg_no = #{ctg_no}
+	</select>
+	
 	<!-- paging -->
 	<select id="listCnt" resultType="int" parameterType="java.util.HashMap">
 		<choose>
@@ -32,7 +40,7 @@
 	</select>
 
   <!-- 자유게시판, 맛집게시판 전체검색 및 제목 검색 결과 -->
-	<select id="boardList" resultType="BoardDto" parameterType="java.util.HashMap">
+ 	<select id="boardList" resultType="BoardDto" parameterType="java.util.HashMap">
 		 <choose>
 			<when test="key == 'title'"><bind name="title" value="'%' + value + '%'"/></when>
 			<when test="key == 'nickname'"><bind name="nickname" value="'%' + value + '%'"/></when>
@@ -53,18 +61,17 @@
 		    </if>
 		  ORDER BY b.board_no DESC
 		  LIMIT #{pstartno}, #{onepagelimit}
-	</select>
-	
-	
+	</select> 
 
 
 	<!-- 게시판 싱글페이지 보이기 -->
-	<select id="readOneBoard" resultType="BoardResultDto" parameterType="BoardResultDto">
-		SELECT b.*, (SELECT COUNT(*) FROM board_like l WHERE l.board_no = b.board_no) AS like_count, r.*
+	<select id="readOneBoard" resultType="BoardDto" parameterType="BoardResultDto">
+		SELECT b.*, (SELECT COUNT(*) FROM board_like l WHERE l.board_no = b.board_no) AS like_count, (select count(*) from board_reply where board_no = #{board_no}) as reply_cnt
 		FROM board b
 		LEFT JOIN board_like l ON b.board_no = l.board_no
 		LEFT JOIN board_reply r ON b.board_no = r.board_no
-		WHERE b.board_no = #{board_no};
+		WHERE b.board_no = #{board_no}
+		limit 1;
 	</select>
 	
 	
@@ -82,21 +89,58 @@
 	
 	
 	<!-- 게시글 삭제 -->
- 	<delete id="deleteBoard" parameterType="BoardDto">
+ 	<delete id="deleteBoard" parameterType="BoardResultDto">
 		delete from board where board_no = #{board_no}
 	</delete> 
 	
 	
+	<!-- 게시물 댓글 작성 -->
+	<insert id="insertBoardReply"  parameterType="BoardReplyDto">
+		insert into board_reply (board_no, user_no, reply_content, reply_nick, reply_ip) 
+		values (#{board_no}, #{user_no}, #{reply_content}, (select user_nick from user where user_no = #{user_no}), #{reply_ip});
+	</insert>
 	
-	<!-- 게시판 좋아요 -->
- 	<update id="updateBoardLike" parameterType="BoardDto">
-		update board set board_like = board_like + 1 where board_no = #{board_no}
-	</update>
+	<!-- 게시물 댓글 갯수 -->
+	<select id="readReplyCnt" parameterType="java.util.HashMap" resultType="int">
+		select count(*) from board_reply where board_no=#{board_no}
+	</select>
+	
+	<!-- 게시물 댓글 보기 -->
+	<select id="readAllReply" parameterType="java.util.HashMap" resultType="BoardReplyDto">
+		select * from board_reply where board_no = #{board_no} order by reply_no DESC
+	</select>
+	
+	<!-- 게시물 댓글 삭제 -->
+	<delete id="deleteBoareReply" parameterType="BoardReplyDto">
+		delete from board_reply where reply_no = #{reply_no}
+	</delete>
+	
+	<!-- 게시글별 좋아요 갯수 -->
+	<select id="boardLikeCnt" parameterType="BoardLikeDto" resultType="int">
+		select count(*) from board_like where board_no = #{board_no}
+	</select>
+	
+	<!-- 게시글 회원별 좋아요 했는지 안했는지 check -->
+	<select id="boardLikeCheck" parameterType="BoardLikeDto" resultType="int">
+		select count(*) from board_like where board_no = #{board_no} and user_no = #{user_no}
+	</select>
+	
+	<!-- 게시글 좋아요 취소 -->
+	<delete id="boardUnLike" parameterType="BoardLikeDto" >
+		delete from board_like where board_no = #{board_no} and user_no = #{user_no}
+	</delete>
+	
+	
+	<!-- 게시글 좋아요 ! -->
+	<insert id="boardLike" parameterType="BoardLikeDto">
+		insert into board_like (board_no, user_no) values (#{board_no},  #{user_no})
+	</insert>
+	
+	
+	
 
-	<!-- 게시판 좋아요 취소 -->
- 	<update id="updateBoardLikeCancle" parameterType="BoardDto">
-		update board set board_like = board_like - 1 where board_no = #{board_no}
-	</update> 
+	
+	
 	
 	
 </mapper>

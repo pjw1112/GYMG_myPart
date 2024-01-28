@@ -20,4 +20,5 @@ public class BoardDto {
 	private String board_ip;
 	
 	private int like_count;
+	private int reply_cnt;
 }

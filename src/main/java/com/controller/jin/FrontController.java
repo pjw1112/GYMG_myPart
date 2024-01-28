@@ -2,10 +2,25 @@ package com.controller.jin;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.InetAddress;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
+
+import javax.mail.Authenticator;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import javax.servlet.ServletException;
 
 
@@ -14,6 +29,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
+import java.util.Random;
+import java.util.UUID;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
@@ -24,10 +42,12 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.dao.TestDao;
 import com.dao.jin.LocationDao;
@@ -94,6 +114,11 @@ public class FrontController {
 		return "/jinPages/find_id1.jsp";
 	}
 
+	@RequestMapping(value = "/GoToFind_id3Page.jin", method = { RequestMethod.GET })
+	public String GoToFind_id3Page() {
+		return "/jinPages/find_id3.jsp";
+	}
+	
 	@RequestMapping(value = "/GoToFind_id2Page.jin", method = { RequestMethod.GET })
 	public String GoToFind_id2Page() {
 		return "/jinPages/find_id2.jsp";
@@ -106,10 +131,10 @@ public class FrontController {
 
 	@RequestMapping(value = "/GoToFind_pass2Page.jin", method = { RequestMethod.GET })
 	public String GoToFind_pass2Page() {
-		return "/jinPages/find_pass2.jsp";
+		return "find_pass_email_trans.jin";
 	}
 
-	@RequestMapping(value = "/GoToFind_pass3Page.jin", method = { RequestMethod.GET })
+	@RequestMapping(value = "/GoToFind_pass3Page.jin", method = { RequestMethod.POST })
 	public String GoToFind_pass3Page() {
 		return "/jinPages/find_pass3.jsp";
 	}
@@ -178,7 +203,7 @@ public class FrontController {
 	}
 
 	@RequestMapping(value = "/receivesmsverify.jin", method = RequestMethod.POST)
-	public void verifyCode(String input4number, HttpServletRequest request, HttpServletResponse response)
+	public void receivesmsverify(String input4number, HttpServletRequest request, HttpServletResponse response)
 			throws IOException {
 		request.setCharacterEncoding("UTF-8");
 		response.setContentType("text/html; charset=UTF-8");
@@ -222,7 +247,50 @@ public class FrontController {
 		}
 
 	}
+	@RequestMapping(value = "/receiveemailverify.jin", method = RequestMethod.POST)
+	public void receiveemailverify(String input4number, HttpServletRequest request, HttpServletResponse response)
+			throws IOException {
+		request.setCharacterEncoding("UTF-8");
+		response.setContentType("text/html; charset=UTF-8");
+		HttpSession session = request.getSession();
+		PrintWriter out = response.getWriter();
 
+		String email4number = (String)session.getAttribute("email4number");
+		
+		log.info("email4number : " + email4number);
+		log.info("input4number : " + input4number);
+		log.info("일치 여부 : " + (input4number==email4number));
+
+		if (  email4number != null) {
+
+			if (input4number != null) {
+
+				if (input4number.trim().equals(  email4number)) {
+
+					session.removeAttribute("email4number");
+					
+
+					log.info("...............All Email verification SuCCESS");
+
+					out.print("2000");
+
+				} else {
+					log.info("...............Email verification FAIL : CAUSE input4number != email4number ");
+					out.print("2001");
+				}
+
+			} else {
+				log.info("...............Email verification FAIL : CAUSE input4number = null ");
+				out.print("2001");
+			}
+
+		} else {
+			log.info("...............Email verification FAIL : CAUSE email4number = null");
+			out.print("2001");
+
+		}
+
+	}
 	@RequestMapping(value = "/IDduplicateCheck.jin", method = RequestMethod.POST)
 	public void idduplicateCheck(String inputID, HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
@@ -290,11 +358,11 @@ public class FrontController {
 
 		log.info(".........dto : " + dto);
 		log.info(".........remember_id : " + remember_id);
-		if (service.normal_login(item, request, response) > 0) {
+		if (service.user_login(item, request, response) > 0) {
 
 			return "2000";
 		}
-		;
+		
 
 		return "2001";
 	}
@@ -324,8 +392,51 @@ public class FrontController {
 	
 	
 	
+
 	
 	
+
+	@RequestMapping(value = "/upload.jin", method = {RequestMethod.POST} )
+	public String upload_post(MultipartFile file, HttpServletRequest request, Model model) throws IOException {
+	
+    	log.info("........POST");
+		log.info("........NAME : " + file.getOriginalFilename());
+		log.info("........size : " + file.getSize());
+		log.info("........contentType : " + file.getContentType());
+		/*				*/
+		/*				*/
+		//#1. 파일이름 중복 안되게 고유값 설정
+		UUID uid = UUID.randomUUID();
+		String save = uid.toString() + "_" + file.getOriginalFilename();
+		log.info("........save name : " + save);
+		//#2. 파일 업로드
+		String rootPath = request.getSession().getServletContext().getRealPath("/");
+		rootPath += "resources\\upload";
+		log.info("...... rootPath : " + rootPath);
+		
+		File target = new File(rootPath, save );
+		
+			try {
+				FileCopyUtils.copy(file.getBytes(), target);
+				/*
+				model.addAttribute("title", request.getParameter("title"));
+				model.addAttribute("file", save);
+			*/
+				return "redirect:GoToMic_tab1Page.jin";
+				
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			
+			
+		
+		
+		return "file_upload_fail";
+    	
+    }
+    
 	
 	
 	
@@ -428,9 +539,9 @@ public class FrontController {
             
             request.setAttribute("access_token", access_token);
             request.getSession().setAttribute("access_token", access_token);
-           
+           /*
             request.getRequestDispatcher("/Kakao_login2.jin").forward(request, response);
-             
+             */
         }
         
          //   JsonObject 내의 모든 키-값 출력
@@ -440,7 +551,7 @@ public class FrontController {
          //   } else {
          //   System.out.println("Given JSON is not an object.");
          //   }
-	return "";
+	return "Kakao_login2.jin";
 	}
 	
 	@RequestMapping(value = "/Kakao_login2.jin", method = { RequestMethod.GET, RequestMethod.POST })
@@ -505,56 +616,34 @@ public class FrontController {
         System.out.println("kakao_email : "+kakao_email);
         System.out.println("kakao_nick : "+kakao_nick);
         
+        Map<String, Object> item = new HashMap<String, Object>();
+        UserDto dto = new UserDto();
+		
+        dto.setJoin_type_no(3);
+        dto.setType_no(2);
+        dto.setUser_id(kakao_email);
+        dto.setUser_ip(InetAddress.getLocalHost().getHostAddress());
+        dto.setUser_name(kakao_nick);
+        dto.setUser_nick(kakao_nick);
+        dto.setUser_phone("00000000000");
+        dto.setUser_pw(kakao_id);
         
-        }
-        /*
-        Users_dao dao = new Users_dao();
-        Users_dto dto = new Users_dto();
-        
-        dto.setU_kakaoid(kakao_id);
-        dto = dao.user_read_byKakao(dto);
-        
-        if(dto == null) { //카카오 로긴 처음 하는거라서 아이디 생성
-        	
-        	// 가입 시간 얻기
-    		LocalDateTime currentDateTime = LocalDateTime.now();
-    		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
-    		String formattedDateTime = currentDateTime.format(formatter);
-    		
-    		dto = new Users_dto();
-    		dto.setU_id(kakao_id);
-    		dto.setU_pass("1234");
-    		dto.setU_email(kakao_email);
-    		dto.setU_birth(birthday);
-    		dto.setU_join_date(formattedDateTime);
-    		dto.setU_grade(4); // 디폴트 회원 등급
-    		dto.setU_kakaoid(kakao_id);
+        item.put("userdto", dto);
+		item.put("login_type", "3");
 
-    		if (dao.user_create_byKakao(dto) < 0) {
-    			System.out.println("dao.user_create_byKakao(dto) 실패");
-    		  //out.print("<script>alert('회원가입 실패. 이미 존재하는 아이디'); location.href='view.do';</script>"); 
-    			return;
-    		}
-    	 }//end 카카오 로긴 처음 하는거라서 아이디 생성
-        dto = new Users_dto();
-        dto.setU_kakaoid(kakao_id);
+		log.info(".........dto : " + dto);
+		
+		if (service.user_login(item, request, response) > 0) {
+
+			return "/jinPages/login_kakao.jsp";
+		}
         
-        dto = dao.user_read_byKakao(dto);
         
-        request.getSession().setAttribute("login_id", dto.getU_id());
-        request.getSession().setAttribute("login_U_index", dto.getU_index());
-         
+        
         }
-        */
-        
-		br.close();
+        br.close();
 		conn.disconnect();
-
 	
-		
-		
-		
-		
 		return "";
 	}
 	
@@ -563,6 +652,358 @@ public class FrontController {
 	/* -- Kakao Login Mappers -- */
 	
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/* -- naver Login Mappers -- */
+	/* -- naver Login Mappers -- */
+	/* -- naver Login Mappers -- */
+	@RequestMapping(value = "/naver_login.jin", method = { RequestMethod.GET, RequestMethod.POST })
+	public String naver_login(HttpServletRequest request, HttpServletResponse response) 
+			throws IOException, ServletException {
+		
+		request.setCharacterEncoding("UTF-8");
+		response.setContentType("text/html; charset=UTF-8");
+		
+		 	String clientId = "jjoG5L0Odeyao6UOPCVc";//애플리케이션 클라이언트 아이디값";
+		    String clientSecret = "EX0nHpNPpN";//애플리케이션 클라이언트 시크릿값";
+		    String code = request.getParameter("code");
+		    String state = request.getParameter("state");
+		    String redirectURI = URLEncoder.encode("http://localhost:8080/Team_GYMG/naver_login.jin", "UTF-8");
+		    String apiURL = "https://nid.naver.com/oauth2.0/token?grant_type=authorization_code"
+		        + "&client_id=" + clientId
+		        + "&client_secret=" + clientSecret
+		        + "&redirect_uri=" + redirectURI
+		        + "&code=" + code
+		        + "&state=" + state;
+		    String accessToken = "";
+		    String refresh_token = "";
+		    JsonParser parser = new JsonParser();
+		    JsonObject my_object = null;
+		    try {
+		      URL url = new URL(apiURL);
+		      HttpURLConnection con = (HttpURLConnection)url.openConnection();
+		      con.setRequestMethod("GET");
+		      int responseCode = con.getResponseCode();
+		      BufferedReader br;
+		      if (responseCode == 200) { // 정상 호출
+		        br = new BufferedReader(new InputStreamReader(con.getInputStream()));
+		      } else {  // 에러 발생
+		        br = new BufferedReader(new InputStreamReader(con.getErrorStream()));
+		      }
+		      String inputLine;
+		      StringBuilder res = new StringBuilder();
+		      while ((inputLine = br.readLine()) != null) {
+		        res.append(inputLine);
+		      }
+		      br.close();
+		      if (responseCode == 200) {
+		        System.out.println(res.toString());
+		        my_object = (JsonObject) parser.parse(res.toString());
+		      }
+		    } catch (Exception e) {
+		      // Exception 로깅
+		    }
+		    accessToken = my_object.get("access_token").getAsString();
+		    refresh_token = my_object.get("refresh_token").getAsString();
+		    String token_type = my_object.get("token_type").getAsString();
+		    String expires_in = my_object.get("expires_in").getAsString();
+		    
+		    request.setAttribute("accessToken", accessToken);
+		    
+		    
+		return "get_naver_member_profile.jin";
+	}
+	@RequestMapping(value = "/get_naver_member_profile.jin", method = { RequestMethod.GET, RequestMethod.POST })
+	public String get_naver_member_profile(HttpServletRequest request, HttpServletResponse response) 
+			throws IOException, ServletException {
+		
+		 
+		request.setCharacterEncoding("UTF-8");
+		response.setContentType("text/html; charset=UTF-8");
+		
+		        String token = (String)request.getAttribute("accessToken"); // 네이버 로그인 접근 토큰;
+		        String header = "Bearer " + token; // Bearer 다음에 공백 추가
+
+
+		        String apiURL = "https://openapi.naver.com/v1/nid/me";
+
+
+		        Map<String, String> requestHeaders = new HashMap<>();
+		        requestHeaders.put("Authorization", header);
+		        String responseBody = get(apiURL,requestHeaders);
+
+
+		        System.out.println(responseBody);
+		        JsonParser parser = new JsonParser();
+		        JsonObject jsonObject = parser.parse(responseBody).getAsJsonObject();
+		        System.out.println(jsonObject.get("message").getAsString());
+		        if(jsonObject.get("message").getAsString().equals("success")) {
+		        
+		        
+		        JsonObject jresponse = jsonObject.get("response").getAsJsonObject();
+
+		        // Extract and format values
+		        String id = jresponse.get("id").getAsString();
+		        String nickname = jresponse.get("nickname").getAsString();
+		        String profile_image = jresponse.get("profile_image").getAsString();
+		        String email = jresponse.get("email").getAsString();
+		        String mobile = jresponse.get("mobile").getAsString().replaceAll("-", "");
+		        String name = jresponse.get("name").getAsString();
+
+		        // Print values (for demonstration)
+		        System.out.println("ID: " + id);
+		        System.out.println("Nickname: " + nickname);
+		        System.out.println("Profile Image: " + profile_image);
+		        System.out.println("Email: " + email);
+		        System.out.println("Mobile: " + mobile);
+		        System.out.println("Name: " + name);
+		        
+		        
+		        Map<String, Object> item = new HashMap<String, Object>();
+		        UserDto dto = new UserDto();
+				
+		        dto.setJoin_type_no(2);
+		        dto.setType_no(2);
+		        dto.setUser_id(email);
+		        dto.setUser_ip(InetAddress.getLocalHost().getHostAddress());
+		        dto.setUser_name(name);
+		        dto.setUser_nick(nickname);
+		        dto.setUser_phone(mobile);
+		        dto.setUser_pw(id);
+		        
+		        item.put("userdto", dto);
+				item.put("login_type", "2");
+
+				log.info(".........dto : " + dto);
+				
+				if (service.user_login(item, request, response) > 0) {
+
+					return "/jinPages/login_naver.jsp";
+				}
+		        
+		        
+		        
+		        
+		        
+		        
+		        
+		        }
+		
+		return "";
+	}
+	
+	
+	public String get(String apiUrl, Map<String, String> requestHeaders){
+        HttpURLConnection con = connect(apiUrl);
+        try {
+            con.setRequestMethod("GET");
+            for(Map.Entry<String, String> header :requestHeaders.entrySet()) {
+                con.setRequestProperty(header.getKey(), header.getValue());
+            }
+
+
+            int responseCode = con.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) { // 정상 호출
+                return readBody(con.getInputStream());
+            } else { // 에러 발생
+                return readBody(con.getErrorStream());
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("API 요청과 응답 실패", e);
+        } finally {
+            con.disconnect();
+        }
+    }
+
+
+    public HttpURLConnection connect(String apiUrl){
+        try {
+            URL url = new URL(apiUrl);
+            return (HttpURLConnection)url.openConnection();
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("API URL이 잘못되었습니다. : " + apiUrl, e);
+        } catch (IOException e) {
+            throw new RuntimeException("연결이 실패했습니다. : " + apiUrl, e);
+        }
+    }
+
+
+    public String readBody(InputStream body){
+        InputStreamReader streamReader = new InputStreamReader(body);
+
+
+        try (BufferedReader lineReader = new BufferedReader(streamReader)) {
+            StringBuilder responseBody = new StringBuilder();
+
+
+            String line;
+            while ((line = lineReader.readLine()) != null) {
+                responseBody.append(line);
+            }
+
+
+            return responseBody.toString();
+        } catch (IOException e) {
+            throw new RuntimeException("API 응답을 읽는데 실패했습니다.", e);
+        }
+    }
+		/* -- naver Login Mappers -- */
+		/* -- naver Login Mappers -- */
+		/* -- naver Login Mappers -- */
+	
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    /* find_id.jin */
+    /* find_id.jin */
+    /* find_id.jin */
+    @RequestMapping(value = "/find_id.jin", method = { RequestMethod.GET, RequestMethod.POST })
+	public String find_id_form_transfer( UserDto userdto,
+			HttpServletRequest request, HttpServletResponse response) 
+					throws IOException, ServletException {
+
+		Map<String, Object> item = new HashMap<String, Object>();
+
+		item.put("userdto", userdto);
+		
+		log.info(".........find_id : ");
+		log.info(userdto.getUser_name());
+		log.info(userdto.getUser_phone());
+		if (service.find_id(item, request, response) > 0) {
+
+			return "GoToFind_id2Page.jin";
+		}
+		
+		return "redirect:GoToFind_id3Page.jin";
+				}
+    /* find_id.jin */
+    /* find_id.jin */
+    /* find_id.jin */	
+    
+    
+    
+    
+    /* find_pass_email_trans.jin */
+    /* find_pass_email_trans.jin */
+    /* find_pass_email_trans.jin */
+	@RequestMapping(value = "/find_pass_email_trans.jin", method = { RequestMethod.GET, RequestMethod.POST })
+	public String find_pass_email_trans(String user_id, HttpServletRequest request) {
+		log.info("...............비번 찾기 이메일 전송 시작");
+		 	System.out.println(user_id);
+			//1. 보내는 쪽
+			String host = "smtp.naver.com";
+			String user = "bananasyndro@naver.com"; //본인 naver 아이디 (이메일형식)
+			String password="Ogsily121@"; //본인 naver 아이디 비밀번호
+			
+			//2. 받는 사람
+			String to = user_id;
+			/*String to = "bananasyndro@naver.com";*/
+			Properties props = new Properties();
+			props.put("mail.smtp.host", host);
+		    props.put("mail.smtp.auth", "true");
+		    props.put("mail.smtp.port", "587");
+
+			props.put("mail.smtp.starttls.enable", "true");
+		    props.put("mail.smtp.ssl.trust", "smtp.naver.com");
+		    props.put("mail.smtp.ssl.protocols", "TLSv1.2"); 
+			
+			Session session = Session.getDefaultInstance(props,
+					new Authenticator() {
+				
+						@Override
+						protected PasswordAuthentication getPasswordAuthentication() {
+							// TODO Auto-generated method stub
+							return new PasswordAuthentication(user, password);
+						}
+						
+					});
+					
+			MimeMessage message = new MimeMessage(session);
+			try {
+				Random random = new Random();
+
+				int randomNumber = random.nextInt(10000);
+
+				String formattedNumber = String.format("%04d", randomNumber);
+				log.info("4자리 난수 : " + formattedNumber);
+				
+				request.getSession().setAttribute("email4number", formattedNumber);
+				
+				message.setFrom( new InternetAddress(user) );  // 보내는 사람
+				message.addRecipient(Message.RecipientType.TO, new InternetAddress(to) );//받는사람
+				
+				message.setSubject("가봄,맛봄 비밀번호 찾기 서비스 입니다.");
+				message.setContent(""
+						
+						+ "<h3>인증번호를 확인해주세요</h3><br>"
+						+ "<p>[ "+formattedNumber+" ]</p><br><br><br>"
+						+ "</div>" , "text/html; charset=euc-kr");
+				
+				Transport.send(message);
+				System.out.println("........... Successfully ......................");
+				
+				return "/jinPages/find_pass2.jsp";
+				
+			} catch (AddressException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (MessagingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			
+			return "/jinPages/find_pass4.jsp";
+			
+	}
+	/* find_pass_email_trans.jin */
+    /* find_pass_email_trans.jin */
+    /* find_pass_email_trans.jin */	
+	
+	
+	/* changeUserPass.jin */
+	/* changeUserPass.jin */
+	/* changeUserPass.jin */
+	@RequestMapping(value = "/changeUserPass.jin", method = { RequestMethod.POST })
+	public String changeUserPass(UserDto userdto, HttpServletRequest request, HttpServletResponse response) 
+			throws IOException, ServletException {
+			log.info("...............비번 변경 맵퍼 시작");
+		 	System.out.println(".... 입력받은 dto : "+userdto);
+			
+		 	Map<String, Object> item = new HashMap<String, Object>();
+
+			item.put("userdto", userdto);
+			
+			log.info(".........update_pw go");
+			
+			if (service.update_pw(item, request, response) > 0) {
+
+				return "redirect:/jinPages/find_pass5.jsp";
+			}
+			
+		 	
+		 	
+		 	
+			return "/jinPages/find_pass4.jsp";
+			
+	}
+	/* changeUserPass.jin */
+	/* changeUserPass.jin */
+	/* changeUserPass.jin */
 	
 	
 	

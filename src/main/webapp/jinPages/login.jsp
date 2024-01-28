@@ -13,12 +13,16 @@
     String redirectURI = URLEncoder.encode("http://localhost:8080/Team_GYMG/naver_login.jin", "UTF-8");
     SecureRandom random = new SecureRandom();
     String state = new BigInteger(130, random).toString();
-    String apiURL = "https://nid.naver.com/oauth2.0/authorize?response_type=code";
-    apiURL += "&client_id=" + clientId;
-    apiURL += "&redirect_uri=" + redirectURI;
-    apiURL += "&state=" + state;
+    String apiNaver_URL = "https://nid.naver.com/oauth2.0/authorize?response_type=code";
+    apiNaver_URL += "&client_id=" + clientId;
+    apiNaver_URL += "&redirect_uri=" + redirectURI;
+    apiNaver_URL += "&state=" + state;
     session.setAttribute("state", state);
- %>
+    
+    String apiKakao_URL="https://kauth.kakao.com/oauth/authorize?response_type=code&";
+    apiKakao_URL+="client_id=5311dcef4df09cce6029d72479addf8c";
+    apiKakao_URL+="&redirect_uri=http://localhost:8080/Team_GYMG/Kakao_login.jin";
+%>
 
 
 
@@ -51,7 +55,7 @@ li {
 
 .join_container {
 	/* border: 1px solid red; */
-	width: 1440px;
+	width: 100%;
 	height: 1200px;
 	padding :  100px 0;
 }
@@ -136,6 +140,7 @@ li {
 	color: #adadad;
 }
 </style>
+<div class="container">
 	<div class="join_container">
 
 		<div class="login_box">
@@ -183,12 +188,12 @@ li {
 				</div>
 				<div class="row_box2">
 					<div class="d-grid">
-						<a href="https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=5311dcef4df09cce6029d72479addf8c&redirect_uri=http://localhost:8080/Team_GYMG/Kakao_login.jin" id="kakao_login_btn" class="btn btn-primary btn-block btn2">카카오 로그인</a>
+						<a href="<%=apiKakao_URL%>" id="kakao_login_btn" class="btn btn-primary btn-block btn2">카카오 로그인</a>
 					</div>
 				</div>
 				<div class="row_box2">
 					<div class="d-grid">
-						<a href="<%=apiURL%>" type="button" id="naver_login_btn" class="btn btn-success btn-block btn3">네이버 로그인</a>
+						<a href="<%=apiNaver_URL%>" id="naver_login_btn" class="btn btn-success btn-block btn3">네이버 로그인</a>
 					</div>
 				</div>
 				<div class="row_box"></div>
@@ -203,6 +208,7 @@ li {
 			</div>
 		</div>
 	</div>
+</div>
 <script>
 // button
 let normal_login_btn = document.querySelector("#normal_login_btn");
@@ -240,7 +246,7 @@ normal_login_btn.addEventListener("click", () =>{
 				
 				console.log(data);
 				
-				if(data="2000"){
+				if(data=="2000"){
 					
 					alert("로그인 성공");
 				 	location.href="GoToMain.jin";	

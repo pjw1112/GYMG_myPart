@@ -1,3 +1,6 @@
+<%@page import="java.math.BigInteger"%>
+<%@page import="java.security.SecureRandom"%>
+<%@page import="java.net.URLEncoder"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 
@@ -6,7 +9,21 @@
 <!-- header -->
 <!-- header -->
 
-
+<%
+    String clientId = "jjoG5L0Odeyao6UOPCVc";//애플리케이션 클라이언트 아이디값";
+    String redirectURI = URLEncoder.encode("http://localhost:8080/Team_GYMG/naver_login.jin", "UTF-8");
+    SecureRandom random = new SecureRandom();
+    String state = new BigInteger(130, random).toString();
+    String apiNaver_URL = "https://nid.naver.com/oauth2.0/authorize?response_type=code";
+    apiNaver_URL += "&client_id=" + clientId;
+    apiNaver_URL += "&redirect_uri=" + redirectURI;
+    apiNaver_URL += "&state=" + state;
+    session.setAttribute("state", state);
+    
+    String apiKakao_URL="https://kauth.kakao.com/oauth/authorize?response_type=code&";
+    apiKakao_URL+="client_id=5311dcef4df09cce6029d72479addf8c";
+    apiKakao_URL+="&redirect_uri=http://localhost:8080/Team_GYMG/Kakao_login.jin";
+%>
 
 
 
@@ -38,7 +55,7 @@ li {
 
 .join_container {
 	/* border: 1px solid red; */
-	width: 1440px;
+	width: 100%;
 	height: 1000px;
 	padding: 100px 0;
 }
@@ -145,10 +162,11 @@ margin : 0 auto;
 line-height : 41px;
 color : white;
 }
+
 </style>
 
 
-
+<div class="container">
 	<div class="join_container">
 
 		<div class="login_box">
@@ -174,13 +192,13 @@ color : white;
 				</div>
 				<div class="row_box2 row7">
 					<div class="d-grid">
-						<a href="#" class="btn btn-primary btn-block btn2">카카오로
+						<a href="<%=apiKakao_URL %>" class="btn btn-primary btn-block btn2">카카오로
 							회원가입</a>
 					</div>
 				</div>
 				<div class="row_box2 row7">
 					<div class="d-grid">
-						<a href="#" class="btn btn-success btn-block btn3">네이버로
+						<a href="<%=apiNaver_URL %>" class="btn btn-success btn-block btn3">네이버로
 							회원가입</a>
 					</div>
 				</div>
@@ -192,7 +210,7 @@ color : white;
 			</div>
 		</div>
 	</div>
-
+</div>
 
 
 

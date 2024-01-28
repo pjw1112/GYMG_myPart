@@ -15,6 +15,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.dao.moon.BoardDao;
 import com.dto.moon.BoardDto;
+import com.dto.moon.BoardLikeDto;
+import com.dto.moon.BoardReplyDto;
 import com.dto.moon.BoardResultDto;
 import com.service.moon.BoardService;
 
@@ -110,11 +112,13 @@ public class Test_moon {
 //		log.info(bservice.readAllBoard(1));
 	}
 	
-	@Test
+	@Test	
 	public void test3() {
 		Map<String , Object> result = new HashMap<>();
 		BoardDto dto = new BoardDto();
 		BoardResultDto rdto = new BoardResultDto(); 
+		BoardReplyDto replydto = new BoardReplyDto();
+		BoardLikeDto likedto = new BoardLikeDto();
 		/*
 		result.put("ctg_no", 1);
 		result.put("key", "content");
@@ -136,11 +140,27 @@ public class Test_moon {
 			e.printStackTrace();
 		}
 		log.info("........" +bdao.insertBoard(dto));
+		
+		
+		dto.setBoard_no(83);
+		log.info("..............." + bdao.readOneBoard(dto));
 		*/
+//		result.put("board_no", 97);
+//		log.info("................" + bdao.readAllReply(result));
+//		log.info(">>>>>>>>>>>>>>>>" + bservice.readAllReply(result));
 		
-		rdto.setBoard_no(83);
-		log.info("..............." + bdao.readOneBoard(rdto));
+//		replydto.setReply_no(63);
+//		log.info("............." + bservice.deleteBoareReply(replydto));
 		
+//		likedto.setUser_no(2);
+//		likedto.setBoard_no(95);
+//		log.info("............" + bservice.boardLikeCheck(likedto));
+		
+//		likedto.setUser_no(2);
+//		likedto.setBoard_no(95);
+//		log.info("..........." + bservice.boardUnLike(likedto));
+		
+		log.info("..........." + bservice.noticeList(4));
 		
 	}
 }

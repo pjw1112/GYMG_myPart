@@ -8,24 +8,25 @@
 		insert into user (type_no, join_type_no, user_id, user_name, user_nick, user_pw, user_phone, user_ip ) 
 		values (#{type_no}, #{join_type_no}, #{user_id}, #{user_name}, #{user_nick}, #{user_pw}, #{user_phone}, #{user_ip})
 	</insert>
-	<update id="update" parameterType="UserDto">
-		update userinfo set
-		name=#{name}, age=#{age} where no=#{no}
+	<update id="updatepw" parameterType="UserDto">
+		update user set user_pw=#{user_pw} where user_id=#{user_id}
 	</update>
 	<delete id="delete" parameterType="int">
 		delete from userinfo where
 		no=#{no}
 	</delete>
 	<select id="duplicateIdCheck" resultType="int">
-		select count(*) from user where user_id=#{user_id}
+		select count(*) from user where user_id=#{user_id} limit 1
 	</select>
 	
-	
+	<select id="find_id" resultType="UserDto">
+		select * from user where user_name=#{user_name} and user_phone=#{user_phone} limit 1
+	</select>
 	<select id="read_user_no" resultType="UserDto">
 		select * from user where user_id=#{user_id} limit 1
 	</select>
-	<select id="user_normal_login" resultType="UserDto">
-		select * from user where user_id=#{user_id} and user_pw=#{user_pw}
+	<select id="user_login" resultType="UserDto">
+		select * from user where user_id=#{user_id} and user_pw=#{user_pw} limit 1
 	</select>
 	<select id="readAll" resultType="UserDto">
 		select * from user order by user_no desc

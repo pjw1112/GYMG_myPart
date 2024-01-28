@@ -3,7 +3,7 @@
 <!-- 여기 아래로 FOOTER -->
 <!-- 여기 아래로 FOOTER -->
 <!-- 여기 아래로 FOOTER -->
-
+<div class="header_footer_container">
 <footer>
 	<div class="footer_row1">취업이 눈앞이조 가봄, 맛봄</div>
 	<div class="footer_row2">
@@ -19,6 +19,7 @@
 	<div class="footer_row4">© 2024 ChwiEopINunApIJo. All rights reserved.</div>
 </footer>
 </div>
+
 
 </body>
 

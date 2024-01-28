@@ -36,8 +36,7 @@ input {
 }
 
 .board_wrapper {
-    width: 80%;
-    margin: auto;
+    margin: 100px auto;
 }
 
 .board_tap_wrapper {
@@ -63,11 +62,9 @@ input {
     line-height: 50px;
     border: 3px solid #fd9b36;
     border-bottom: 0;
-    margin-right: 5px;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
     color: #000;
-    
 }
 
 .board_tabs li a{
@@ -108,6 +105,7 @@ input {
     width: 500px;
     border: 3px solid #df7100;
     border-radius: 10px;
+    padding: 10px;
 }
 
 .board_search_button_wrapper input {
@@ -133,7 +131,7 @@ input {
     height: 40px;
     margin-top: 30px;
     border-radius: 10px;
-    color: #fff5eb;
+    color: #fff5eb !important;
 }
 
 .board_tab_container {
@@ -244,8 +242,7 @@ input {
 
 .board_write_wrapper{
 	width: 80%;
-    margin: auto;
-    border: 1px solid #FD9B36;
+    margin: 70px auto;
 }
 
 
@@ -253,34 +250,33 @@ input {
     width: 150px;
     height: 100px;
     line-height: 100px;
-    margin-left: 30px;
 }
 
 .board_write_ctg {
     width: 100%;
     border: 3px solid #DDDDDD;
-    height: 40px;
-    border-radius: 10px;
+    border-radius: 5px;
+    padding: 5px 10px;
 }
 .board_title_input_wrapper{
 	height: 40px;
-	margin: 10px 30px;
-	border-bottom : 1px solid #FD9B36;
+    border: 1px solid #999999;
+    padding: 5px;
 }
 .board_title_input{
 	
 }
 .board_write_writer{
 	text-align: right;
-    margin-right: 40px;
     height: 40px;
     line-height: 40px;
+    margin: 10px 0;
 }
 .board_write_btn_wrapper{
 	height: 40px;
     line-height: 40px;
 	clear : both;
-	margin: 10px 0;
+	margin: 50px 0;
 }
 
 .btn_moon, a.btn_moon{
@@ -290,7 +286,7 @@ input {
 	text-align:center;
 	font-size:16px;
 	background-color: #AAAAAA;
-	color:white;
+	color:white !important;
 	display:inline-block;
 	border-radius: 5px;
 }
@@ -317,20 +313,27 @@ input {
 .board_single_title_wrapper{
 	clear: both;
     height: 60px;
-    background-color: #ffc080;
     line-height: 60px;
     padding: 0 10px;
+    font-size: 24px;
+    border-bottom: 1px solid #fd9b36;
+    margin-bottom: 10px;
 }
 .board_single_title{
 	float : left;
 }
 .board_single_title_data{
-	float : right;
+	text-align: right;
+    margin-bottom: 30px;
+    border-bottom: 1px solid #fd9b36;
+    padding-bottom: 20px;
+}
+.board_single_writer_profile_image{
+	height:30px;
 }
 .board_single_writer_profile_image,
 .board_single_writer_profile_nick,
 .board_single_writer_date{
-	height: 30px;
     display: inline-block;
     vertical-align: middle;
 }
@@ -339,12 +342,16 @@ input {
 }
 .board_single_writer_wrapper{
 	height: 40px;
-	line-height:40px;
-	background-color: #FFDFBE;
-	padding: 0 10px;
+    line-height: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 .board_content{
-	height: 400px;
+	padding: 10px 0;
+    min-height: 400px;
+    max-height: 800px;
+    overflow-y: scroll;
 }
 
 .board_single_btn_wrapper{
@@ -354,11 +361,11 @@ input {
 }
 .board_single_btn_wrapper a{
 	line-height: 40px;
-    width: 100px;
+    width: 90px;
     display: inline-block;
     background-color: white;
     border:1px solid #AAAAAA;
-    color:#333;
+    color:#333 !important;
     text-align: center;
     height: 40px;
     margin-top: 30px;
@@ -377,12 +384,14 @@ input {
     line-height: 100px;
     margin-right:10px;
 }
+.board_like_img{
+    vertical-align: sub;
+}
 
 .board_single_link_copy_btn,
 .board_single_like_btn,
 .board_single_edit_btn,
 .board_single_delete_btn,
-.board_write_list_btn,
 .board_write_list_btn{
 	width: 90px;
     height: 40px;
@@ -390,11 +399,21 @@ input {
     text-align: center;
     background-color: white;
     border:1px solid #AAAAAA;
-    color:#333;
+    color:#333 !important;
     display: inline-block;
     border-radius: 5px;
+   	cursor: pointer;
 }
-
+.board_write_list_btn_wrapper{
+	height: 40px;
+    width: 90px;
+    margin: 10px 0;
+}
+.board_write_list_btn{
+    background-color: #fd9b36;
+    color: #fff5eb !important;
+    border-radius: 5px;
+}
 .board_single_edit_btn{
 	color : #457FEE;
 }
@@ -425,16 +444,18 @@ input {
 }
 
 .board_review_write{
-	height : 150px;
-	width:100%;
-	border : 1px solid #333;
-	resize : none;
+	height: 150px;
+    width: 100%;
+    border: 1px solid #999999;
+    resize: none;
+    padding: 10px;
 }
 
 .board_single_review_submit_btn_wrapper{
     height: 40px;
     line-height: 40px;
     text-align: right;
+    margin: 10px 0 20px;
 }
 .board_single_review_submit_btn{
 	background-color: #fd9b36;
@@ -443,18 +464,32 @@ input {
 	width: 25px;
     height: 25px;
 }
-.board_single_review_nick_time{
-	width: 100px;
-    margin: 0 10px;
-}
+
 .board_single_review_single{
 	display: flex;
     align-items: center;
     height: 100px;
-    background-color: #FFDFBE;
+    padding: 22px;
+    background-color: white;
+    box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    margin-bottom: 10px;
+    border-radius: 10px;
+    justify-content: space-between;
 }
-.board_single_review_delete_btn{
-	
+.board_single_review_nick_time{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.board_single_review_content {
+    padding: 10px 0;
+}
+
+.board_single_review_nick_time p:nth-child(2) {
+	color: #fd9b36;
+    font-weight: 600;
+    font-size: 18px;
 }
 .board_single_review_showmore_btn{
 	height:100px;
@@ -464,3 +499,24 @@ input {
 .board_write_submit_btn{
 	background-color: #fd9b36;
 }
+
+.board_single_review_delete_btn {
+    cursor: pointer;
+}
+
+input#board_title {
+    width: 100%;
+}
+
+
+
+.notice_wrapper{
+    font-weight: 600;
+}
+/*
+.notice_wrapper:hover {
+    background-color: #999999;
+    color: white;
+    cursor: pointer;
+}
+*/

@@ -33,7 +33,7 @@ li {
 
 .toptier_container {
 	/* border: 1px solid red; */
-	width: 1440px;
+	width: 100%;
 	padding: 100px 0;
 }
 
@@ -143,10 +143,61 @@ label {
 	font-weight: bold;
 	background-color: #ffcf9e;
 }
+input[type='email']::placeholder {
+	color: #cccccc;
+}
 
+.check_message {
+	font-size: 16px;
+	/*border : 1px solid red;*/
+	width: 100%;
+	text-align: right;
+	line-height: 14px;
+	position: relative;
+}
+
+.check_success {
+	position: absolute;
+	color: rgb(56, 255, 56);
+	top: -39px;
+	right: 12px;
+	font-size: 25px;
+}
+
+.check_ing {
+	position: absolute;
+	color: #A7C5FF;
+	top: -39px;
+	right: 12px;
+	font-size: 25px;
+	top: -39px;
+}
+
+.check_fail {
+	position: absolute;
+	color: rgb(252, 87, 16);
+	top: -39px;
+	right: 12px;
+	font-size: 25px;
+}
+
+.ing {
+	color: #A7C5FF;
+	margin-bottom: 0;
+}
+
+.success {
+	color: rgb(56, 255, 56);
+	margin-bottom: 0;
+}
+
+.fail {
+	color: rgb(252, 87, 16);
+	margin-bottom: 0;
+}
 
 </style>
-
+<div class="container">
 <div class="toptier_container">
 	<br> <br>
 	<div class="row_box row1">아이디 / 비밀번호 찾기</div>
@@ -159,7 +210,7 @@ label {
 	<div class="toptier_box">
 		<div class="inner_container">
 
-			<form action="GoToFind_pass2Page.jin" method="get">
+			<form action="GoToFind_pass2Page.jin" id="find_pass_form1" method="post">
 				<div class="main_form">
 					<div class="item column1"></div>
 					<div class="item column2 mygray">비밀번호를 찾을 아이디를 입력해주세요</div>
@@ -169,9 +220,10 @@ label {
 					<div class="item column1">
 						<label for="user_id" class="form-label">아이디(이메일)</label>
 					</div>
-					<div class="item column2">
+					<div class="item column2 id_check">
 						<input type="email" id="user_id" name="user_id"
-							class="form-control middle_input" placeholder="이메일" >
+							class="form-control middle_input" placeholder="nicetomeetyou@welcome.com" >
+						<label for="user_id" class="check_message"></label>
 					</div>
 					<div class="item column3"></div>
 					<!-- #################################################### -->
@@ -195,7 +247,150 @@ label {
 		</div>
 	</div>
 </div>
+</div>
+<script>
+let id_ok = false;
+let id_verify_ok = false;
+let email_form = document.querySelector("#user_id");
+let email_form_label_Check = document.querySelector(".id_check .check_message");
+let id_check_btn = document.querySelector("#find_pass_form1");
 
+//1. 아이디(email) 조건 확인
+email_form.addEventListener("input", () =>{
+
+    let email = email_form.value;
+    let emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+    
+    if (email_form.value.length != 0) {
+        if (emailRegex.test(email)) {
+          email_form_label_Check.innerHTML = "";
+          let p = document.createElement("p");
+          p.innerHTML = "이메일 형식 충족, 중복확인 진행해주세요";
+          p.classList.add("ing");
+          email_form_label_Check.appendChild(p);
+    
+          let success = document.createElement("div");
+          success.innerHTML = "<i class='fa-regular fa-circle-right'></i>";
+          success.classList.add("check_ing");
+          email_form_label_Check.appendChild(success);
+
+          id_ok = true;
+          id_verify_ok = false;
+
+        } else {
+          email_form_label_Check.innerHTML = "";
+          let p = document.createElement("p");
+          p.innerHTML = "이메일 형식으로 입력해주세요";
+          p.classList.add("fail");
+          email_form_label_Check.appendChild(p);
+    
+          let fail = document.createElement("div");
+          fail.innerHTML = "<i class='fa-regular fa-circle-xmark'></i>";
+          fail.classList.add("check_fail");
+          email_form_label_Check.appendChild(fail);
+
+          id_ok = false;
+          id_verify_ok = false;
+        }
+      } else {
+        email_form_label_Check.innerHTML = "";
+        id_ok = false;
+        id_verify_ok = false;
+      }
+
+});
+
+
+//1-1 아이디 중복 검사
+id_check_btn.addEventListener("submit",function(event){
+	
+	event.preventDefault();
+	
+	if(id_ok){
+		
+		 $.ajax({
+				url : "IDduplicateCheck.jin",
+				type : "POST",
+				dataType : "text",
+				data : {
+					inputID : email_form.value
+				},
+				error : function(xhr, status, msg) {
+					alert("오류가 발생했습니다. 관리자에게 문의해주세요.\n"+"status : "+status + "/n" +"msg : "+ msg);
+				},
+				success : function(data){
+					
+					console.log(data);
+					console.log(typeof(data));
+					
+					if(data=="1"){
+						  email_form_label_Check.innerHTML = "";
+				          let p = document.createElement("p");
+				          p.innerHTML = "이메일로 인증번호 전송중...";
+				          p.classList.add("success");
+				          email_form_label_Check.appendChild(p);
+				    
+				          let success = document.createElement("div");
+				          success.innerHTML = "<i class='fa-regular fa-circle-check'></i>";
+				          success.classList.add("check_success");
+				          email_form_label_Check.appendChild(success);
+				          
+				          id_verify_ok = true;
+				          
+				          location.href="GoToFind_pass2Page.jin?user_id="+email_form.value;
+				          
+				          
+				          
+				          
+						
+					}else{
+						 	
+						  alert("일치하는 회원 아이디가 없습니다 \n다시 확인해주세요");
+						  email_form_label_Check.innerHTML = "";
+				          let p = document.createElement("p");
+				          p.innerHTML = "일치하는 아이디 없음";
+				          p.classList.add("fail");
+				          email_form_label_Check.appendChild(p);
+				    
+				          let fail = document.createElement("div");
+				          fail.innerHTML = "<i class='fa-regular fa-circle-xmark'></i>";
+				          fail.classList.add("check_fail");
+				          email_form_label_Check.appendChild(fail);
+
+				          id_verify_ok = false;
+						
+						
+					}
+				}
+			});
+		
+		
+		
+		
+	}else{
+	  	
+	  email_form_label_Check.innerHTML = "";
+      let p = document.createElement("p");
+      p.innerHTML = "이메일 형식을 만족한뒤 확인해주세요";
+      p.classList.add("fail");
+      email_form_label_Check.appendChild(p);
+
+      let fail = document.createElement("div");
+      fail.innerHTML = "<i class='fa-regular fa-circle-xmark'></i>";
+      fail.classList.add("check_fail");
+      email_form_label_Check.appendChild(fail);
+
+	}
+	
+	
+	
+});
+
+
+
+
+
+</script>
 
 
 

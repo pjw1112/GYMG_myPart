@@ -17,5 +17,7 @@ public class RestInfoDto {
 	private String rest_tel;
 	private String rest_time;
 	private String ctg_name;
-		
+	private int rest_like_cnt;
+	private float review_avg;
+	private int review_cnt;
 }

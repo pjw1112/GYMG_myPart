@@ -5,7 +5,6 @@
 <div class="container">
 	<!-- header end -->
 	<div class="wrapper-yeeun">
-	
 		<h2 class="admin-title">식당 목록</h2>
 		<div class="search-box">
 			<select name="searchType" class="admin-select">
@@ -21,6 +20,13 @@
 			<!-- <caption>
 						식당 목록 테이블
 					</caption> -->
+			<colgroup>
+				<col style="15%">
+				<col style="20%">
+				<col style="40%">
+				<col style="15%">
+				<col style="10%">
+			</colgroup>
 			<thead>
 				<tr>
 					<th>식당번호</th>
@@ -35,16 +41,16 @@
 					<tr>
 						<td>${rest.rest_no}</td>
 						<td><a href="adminRestEdit.ye?rest_no=${rest.rest_no}">${rest.rest_name}</a></td>
-						<td><a href="adminRestEdit.ye?rest_no=${rest.rest_no}">${rest.rest_address }<c:if test="${rest.rest_address2 != null}">, ${rest.rest_address2 }</c:if></a></td>
+						<td><a href="adminRestEdit.ye?rest_no=${rest.rest_no}">${rest.rest_address }<c:if
+									test="${rest.rest_address2 != null}">, ${rest.rest_address2 }</c:if></a></td>
 						<td>${rest.rest_time }</td>
-						<td><a href="adminRestEdit.ye?rest_no=${rest.rest_no}" class="edit_btn"><img
-								src="images/edit_icon.svg" alt="수정" /></a>
-								<a href="adminRestDelete.ye?rest_no=${rest.rest_no}" class="edit_btn"><img
-								src="images/delete_icon.svg" alt="삭제" /></a>
+						<td><a href="adminRestEdit.ye?rest_no=${rest.rest_no}"
+							class="edit_btn"><img src="images/edit_icon.svg" alt="수정" /></a>
+							<a href="adminRestDelete.ye?rest_no=${rest.rest_no}"
+							class="edit_btn"><img src="images/delete_icon.svg" alt="삭제" /></a>
 							<!-- <button class="rest-delete" onclick="deleteRest();">
 								<img src="images/delete_icon.svg" alt="삭제" />
-							</button> -->
-						</td>
+							</button> --></td>
 					</tr>
 				</c:forEach>
 			</tbody>

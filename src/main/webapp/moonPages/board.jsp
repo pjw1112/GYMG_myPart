@@ -1,7 +1,7 @@
+<%@page import="java.util.Enumeration"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ include file="../inc/header.jsp" %>
-
     <div class="container">
         <div class="total_wrapper">
             <h1 class="hidden_mj">게시판 게시글 목록1</h1>
@@ -25,7 +25,7 @@
                     <div class="board_search_input_wrapper"> <!-- 검색 input 박스 -->
                         <input type="text" name="board_search" id="board_search"  
                         	<c:choose>
-						        <c:when test="${value != 0}">
+						        <c:when test="${not empty value and value ne '0'}">
 						            value="${value}"
 						        </c:when>
 						        <c:otherwise>
@@ -38,9 +38,20 @@
                     </div>
                 </div> <!-- 검색 박스 -->
 
-                <div class="board_write_button_wrapper"><!-- 글쓰기 버튼 div -->
-                    <a href="board_write.moon">글쓰기</a>
-                </div>
+
+                <c:choose>
+				    <c:when test="${empty sessionScope.login_user_dto}">
+				    	<div class="board_write_list_btn_wrapper">
+				        	<span class="btn_moon board_write_list_btn disabled" id="board_write_nologin">글쓰기</span>
+				    	</div>
+				    </c:when>
+				    <c:otherwise>
+					    <div class="board_write_list_btn_wrapper">
+					        <a href="board_write.moon" class="board_write_list_btn">글쓰기</a>
+					    </div>
+				    </c:otherwise>
+				</c:choose>
+				
 
                 <div class="board_tab_container">
                     <div id="tab1" class="board_tab_content"> <!-- 자유게시판 목록 테이블-->
@@ -56,7 +67,11 @@
                                     <th>추천</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            
+                            
+                            <tbody class="board_tbody">
+                            	
+	                           	<!-- 공지 -->
                             	<c:forEach var="boardList" items="${list }" varStatus="status" >
 	                                <tr>
 	                                    <td>${paging.listtotal - paging.pstartno - status.index}</td>
@@ -64,7 +79,7 @@
 	                                    <td>${boardList.board_nick}</td>
 	                                    <td>${boardList.board_time}</td>
 	                                    <td>${boardList.board_hit}</td>
-	                                    <td>${boardList.board_like}</td>
+	                                    <td>${boardList.like_count}</td>
 	                                </tr>
                             	</c:forEach>
                             </tbody>
@@ -73,7 +88,7 @@
 	                        <ul class="pagenation">
                             	<c:if test="${paging.start >= paging.bottomlimit }">
 		 							<li  class="prebtn">
-		 								<a href="${pageContext.request.contextPath }/board_list.moon?pstartno=${(paging.start-2)*paging.onepagelimit}&ctg_no=${param.ctg_no}&key=${param.key}&value=${param.value}">&lt;</a>
+		 								<a href="${pageContext.request.contextPath }/board_list.moon?pstartno=${(paging.start-2)*paging.onepagelimit}&ctg_no=${param.ctg_no}&key=${param.key}&value=${param.value}"></a>
 		 							</li>
 		 						</c:if>
                            		<c:forEach begin="${paging.start }" end="${paging.end }" var="i">
@@ -83,7 +98,7 @@
 		 						</c:forEach>
                             	<c:if test="${paging.end < paging.pagetotal}">
 		 							<li class="nextbtn">
-		 								<a href="${pageContext.request.contextPath }/board_list.moon?pstartno=${paging.end*paging.onepagelimit}&ctg_no=${param.ctg_no}&key=${param.key}&value=${param.value}">&gt;</a>
+		 								<a href="${pageContext.request.contextPath }/board_list.moon?pstartno=${paging.end*paging.onepagelimit}&ctg_no=${param.ctg_no}&key=${param.key}&value=${param.value}"></a>
 		 							</li>
 		 						</c:if>
 	                        </ul>
@@ -97,8 +112,11 @@
 	    	var freetab = $('.board_tabs li:first-child');
 	    	var resttab = $('.board_tabs li:nth-child(2)');
 	    	var searchButton = $('#search_button');
-	    	
-	    
+	    	var writeBtnNologin = $("#board_write_nologin");
+	    	var noticeCtgNo = ${param.ctg_no + 2};
+	    	var oneNotice = $('.notice_wrapper');
+	    	console.log(oneNotice)
+	    	noticeList(); 
 	    	
 	    	searchButton.click(function(){
 	    		var search = $('#board_search');
@@ -111,8 +129,47 @@
 	    			location.href="board_list.moon?pstartno=0&ctg_no=${param.ctg_no}&key=" + selected.val() + "&value=" + search.val()
 	    		}
 	    		
-	    		
 	    	})
+	    	
+	    	 writeBtnNologin.click(function(){
+	        	alert('로그인 후 이용가능한 서비스입니다.');
+	        })
+	        
+	        
+	       function noticeList(){
+	    		 $.ajax({
+		                url: "board_notice.moon",
+		                type: "GET",
+		                dataType: "json",
+		                data:{
+		                	"ctg_no" : noticeCtgNo
+		                },
+		                error: function (xhr, status, msg) {
+		                    alert(status + "/" + msg);
+		                },
+		                success: function (json) {
+		                	noticeListResult(json);
+		                }
+		            });
+	    	}
+	    	
+	    	
+	    	
+	    	function noticeListResult(json) {
+	    	    $("#notice").empty();
+	    	    $.each(json.list, function (idx, list) {
+	    	        $("<tr>").addClass("notice_wrapper")
+	    	            .append($("<td>").html("[ 공지 ]"))
+	    	            .append($("<td>").html("<a href='board_single.moon?board_no=" + list.board_no + "'>" + list.board_title + "</a>"))
+	    	            .append($("<td>").html("게시판지킴이"))
+	    	            .append($("<td>").html(list.board_time))
+	    	            .append($("<td>").html(list.board_hit))
+	    	            .append($("<td>").html(list.like_count))
+	    	            .prependTo(".board_tbody");
+	    	    }); 
+	    	}
+	       
+	    	
 	       
 	    });
 		</script>

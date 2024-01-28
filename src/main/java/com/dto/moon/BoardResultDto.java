@@ -24,7 +24,7 @@ public class BoardResultDto {
 	private int reply_no;
 	private int reply_user_no;
 	private String reply_time;
-	private int reply_nick;
+	private String reply_nick;
 	private String reply_ip;
 	
 	

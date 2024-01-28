@@ -35,7 +35,7 @@ li {
 
 .join_container {
 	/* border: 1px solid red; */
-	width: 1440px;
+	width: 100%;
 	height: 1000px;
 	padding: 100px 0;
 }
@@ -147,7 +147,7 @@ li {
 </style>
 
 
-
+<div class="container">
 <div class="join_container">
 
 	<div class="login_box">
@@ -187,7 +187,7 @@ li {
 		</div>
 	</div>
 </div>
-
+</div>
 
 
 

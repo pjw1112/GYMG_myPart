@@ -33,7 +33,7 @@
 	<!-- div container -->
 	<div class="container  panel panel-warning">
 		<h1 class="panel-heading">취업이 눈앞이조! -팀 프로젝트 "가봄,맛봄"</h1>
-		<br> <br> <a href="GoToMain.jin" class="big_button">프로젝트 메인 페이지로 </a> <br>
+		<br> <br> <a href="index.ye" class="big_button">프로젝트 메인 페이지로 </a> <br>
 		<br> <br>
 	</div>
 	<!-- div container -->

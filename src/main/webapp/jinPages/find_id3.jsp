@@ -151,17 +151,25 @@ label {
 }
 
 .message_box {
+	position : relative;
 	text-align: center;
-	margin-top : 60px;
-	font-size: 20px;
-	line-height : 50px;
+	margin-top : 45px;
+	color : #FD9B36;
 	/*border: 2px solid #d3d3d3;*/
 }
+.message_box img {
+position : absolute;
+width : 150px;
+top : 70px;
+left : 210px;
+}
+
 .result_id{
 	color : #FD9B36;
 	font-weight: bold;
-	font-size : 30px;
-	line-height : 70px;
+}
+h1{
+font-size : 22px;
 }
 </style>
 <div class="container">
@@ -177,9 +185,11 @@ label {
 	<div class="toptier_box">
 		<div class="your_id">
 			<div class="message_box">
-				<p>회원님의 아이디는</p> 
-				<p class="result_id">${find_id_result}</p>
-				<p>입니다.</p>
+			<img alt="" src="${pageContext.request.contextPath}/images/not_find_id.gif">
+				<h1>입력하신 정보와 일치하는 아이디가 없습니다</h1>
+				<br>
+				<p>회원 정보를 다시 확인해주세요</p>
+				
 			</div>
 		</div>
 		<div class="inner_container">
@@ -199,7 +209,7 @@ label {
 
 				<div class="item column2">
 					<button type="button" class="btn btn-warning btn-block">
-					<a href="GoToLoginPage.jin">로그인하러 가기</a>
+					<a href="GoToFind_id1Page.jin">되돌아가기</a>
 					</button>
 				</div>
 
@@ -211,7 +221,13 @@ label {
 	</div>
 </div>
 </div>
+<script>
 
+document.querySelector(".btn").addEventListener("click",function(){
+	location.href="GoToFind_id1Page.jin";
+});
+
+</script>
 
 
 

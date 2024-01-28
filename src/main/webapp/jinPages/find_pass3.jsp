@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
+ <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 
 <%@ include file="../inc/header.jsp"%>
@@ -33,7 +33,7 @@ li {
 
 .toptier_container {
 	/* border: 1px solid red; */
-	width: 1440px;
+	width: 100%;
 	padding: 100px 0;
 }
 
@@ -107,6 +107,8 @@ label {
 
 .mygray {
 	color: #999999;
+	font-size : 22px;
+	
 	text-align: center;
 }
 
@@ -148,10 +150,67 @@ label {
   color: #rgb(83, 81, 81);
 }
 .result_id{
+line-height : 30px;
+	font-size : 18px;
 	color : #FD9B36;
 }
-</style>
+/* 회원가입form 유효성 검사 관련 CSS */
+/* 회원가입form 유효성 검사 관련 CSS */
+/* 회원가입form 유효성 검사 관련 CSS */
+.check_message {
+	font-size: 16px;
+	/*border : 1px solid red;*/
+	width: 100%;
+	text-align: right;
+	line-height: 14px;
+	position: relative;
+}
 
+.check_success {
+	position: absolute;
+	color: rgb(56, 255, 56);
+	top: -39px;
+	right: 12px;
+	font-size: 25px;
+}
+
+.check_ing {
+	position: absolute;
+	color: #A7C5FF;
+	top: -39px;
+	right: 12px;
+	font-size: 25px;
+	top: -39px;
+}
+
+.check_fail {
+	position: absolute;
+	color: rgb(252, 87, 16);
+	top: -39px;
+	right: 12px;
+	font-size: 25px;
+}
+
+.ing {
+	color: #A7C5FF;
+	margin-bottom: 0;
+}
+
+.success {
+	color: rgb(56, 255, 56);
+	margin-bottom: 0;
+}
+
+.fail {
+	color: rgb(252, 87, 16);
+	margin-bottom: 0;
+}
+/* 회원가입form 유효성 검사 관련 CSS */
+/* 회원가입form 유효성 검사 관련 CSS */
+/* 회원가입form 유효성 검사 관련 CSS */
+
+</style>
+<div class="container">
 <div class="toptier_container">
 	<br> <br>
 	<div class="row_box row1">아이디 / 비밀번호 찾기</div>
@@ -164,20 +223,21 @@ label {
 	<div class="toptier_box">
 		<div class="inner_container">
 
-			<form action="GoToFind_pass3Page.jin" method="get">
+			<form action="changeUserPass.jin?user_id=${param.user_id}" id="changePassForm"  method="post">
 				<div class="main_form">
 					<div class="item column1"></div>
 					<div class="item column2 mygray">새로운 비밀번호를 설정해주세요<br>
-					<p class="result_id">( 계정 : bananasyndro@naver.com )</p></div>
+					<p class="result_id">( ID : ${param.user_id} )</p></div>
 					<div class="item column3"></div>
 					<!-- #################################################### -->
 
 					<div class="item column1">
 						<label for="user_pw" class="form-label">새 비밀번호</label>
 					</div>
-					<div class="item column2">
+					<div class="item column2 pw_check">
 						<input type="password" id="user_pw" name="user_pw"
-							class="form-control middle_input" >
+							class="form-control middle_input" > <label for="user_pw"
+							class="check_message"></label>
 					</div>
 					<div class="item column3"></div>
 					<!-- #################################################### -->
@@ -186,12 +246,13 @@ label {
 					<div class="item column1">
 						<label for="user_pw2" class="form-label">새 비밀번호 확인</label>
 					</div>
-					<div class="item column2">
+					<div class="item column2 pw2_check">
 						<input type="password" id="user_pw2" name="user_pw2"
-							class="form-control middle_input" >
+							class="form-control middle_input" > <label for="user_pw2"
+							class="check_message"></label>
 					</div>
 					<div class="item column3">
-					<button type="button" class="btn btn-warning phone_check">인증하기</button>
+					
 					</div>
 					<!-- #################################################### -->
 					<div class="item column1"></div>
@@ -215,7 +276,158 @@ label {
 		</div>
 	</div>
 </div>
+</div>
+<script>
 
+let pass_ok = false;
+let pass2_ok = false;
+
+let pass_form = document.querySelector("#user_pw");
+let pass2_form = document.querySelector("#user_pw2");
+
+let pass_form_label_Check = document.querySelector(".pw_check .check_message");
+let pass2_form_label_Check = document.querySelector(".pw2_check .check_message");
+
+let changePassForm = document.querySelector("#changePassForm");
+
+
+//4. PASS 조건 확인
+let passPattern = /[!~@#$%^&*\-_=+]/g;
+pass_form.addEventListener("input", () => {
+  if (pass_form.value.length != 0) {
+    if (4 <= pass_form.value.length && pass_form.value.length <= 20) {
+  	  let specialCharacterCount = 0;
+  	  let matches = pass_form.value.match(passPattern);
+  	  if (matches) {
+  	    specialCharacterCount = matches.length;
+  	  }
+  	  if (specialCharacterCount >= 1 && specialCharacterCount <= 3) {
+  		    pass_form_label_Check.innerHTML = "";
+  	        let p = document.createElement("p");
+  	        p.innerHTML = "비밀번호 조건 충족 <i class='fa-solid fa-square'></i><i class='fa-solid fa-square'></i><i class='fa-solid fa-square'></i>";
+  	        p.classList.add("success");
+  	        pass_form_label_Check.appendChild(p);
+  	  
+  	        let success = document.createElement("div");
+  	        success.innerHTML = "<i class='fa-regular fa-circle-check'></i>";
+  	        success.classList.add("check_success");
+  	        pass_form_label_Check.appendChild(success);
+
+  		  }else{
+  			
+  			  pass_form_label_Check.innerHTML = "";
+  		        let p = document.createElement("p");
+  		        p.innerHTML = "특수문자 !~@#$%^&*-_=+ 1~ 3자 필요 <i class='fa-regular fa-square'></i><i class='fa-solid fa-square'></i><i class='fa-solid fa-square'></i>";
+  		        p.classList.add("fail");
+  		        pass_form_label_Check.appendChild(p);
+  		  
+  		        let fail = document.createElement("div");
+  		        fail.innerHTML = "<i class='fa-regular fa-circle-xmark'></i>";
+  		        fail.classList.add("check_fail");
+  		        pass_form_label_Check.appendChild(fail);
+
+  		        pass_ok = false;
+  			  
+  			  
+  			  
+  		  } 
+  	  
+     
+      pass_ok = true;
+    } else {
+      pass_form_label_Check.innerHTML = "";
+      let p = document.createElement("p");
+      p.innerHTML = "비밀번호는 4~ 20자 <i class='fa-regular fa-square'></i><i class='fa-regular fa-square'></i><i class='fa-solid fa-square'></i>";
+      p.classList.add("fail");
+      pass_form_label_Check.appendChild(p);
+
+      let fail = document.createElement("div");
+      fail.innerHTML = "<i class='fa-regular fa-circle-xmark'></i>";
+      fail.classList.add("check_fail");
+      pass_form_label_Check.appendChild(fail);
+
+      pass_ok = false;
+    }
+  } else {
+    pass_form_label_Check.innerHTML = "";
+    pass_ok = false;
+  }
+  pass_match()
+});
+
+
+
+//5. PASS2 조건 확인
+pass2_form.addEventListener("input", () => {
+  pass_match();
+});
+
+function pass_match(){
+  if (pass2_form.value.length != 0) {
+      if (pass_form.value == pass2_form.value) {
+        pass2_form_label_Check.innerHTML = "";
+        let p = document.createElement("p");
+        p.innerHTML = "비밀번호 일치";
+        p.classList.add("success");
+        pass2_form_label_Check.appendChild(p);
+  
+        let success = document.createElement("div");
+        success.innerHTML = "<i class='fa-regular fa-circle-check'></i>";
+        success.classList.add("check_success");
+        pass2_form_label_Check.appendChild(success);
+
+        pass2_ok = true;
+      } else {
+        pass2_form_label_Check.innerHTML = "";
+        let p = document.createElement("p");
+        p.innerHTML = "비밀번호 불일치";
+        p.classList.add("fail");
+        pass2_form_label_Check.appendChild(p);
+  
+        let fail = document.createElement("div");
+        fail.innerHTML = "<i class='fa-regular fa-circle-xmark'></i>";
+        fail.classList.add("check_fail");
+        pass2_form_label_Check.appendChild(fail);
+
+        pass2_ok = false;
+      }
+    } else {
+      pass2_form_label_Check.innerHTML = "";
+      pass2_ok = false;
+    }
+}
+
+
+changePassForm.addEventListener("submit", (event) => {
+
+	if(!pass_ok ){
+		alert("pass 입력을 확인해주세요.");
+		event.preventDefault();
+		return;
+	}
+	if(!pass2_ok ){
+		alert("pass2 입력을 확인해주세요.");
+		event.preventDefault();
+		return;
+	}
+	
+	
+	
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
 
 
 

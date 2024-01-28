@@ -4,9 +4,9 @@
 <!-- header -->
 <!-- header -->
 <!-- header -->
-
+<div class="container">
 <div style="height : 800px;"><div style="margin-top : 200px;"><h1>메인 페이지</h1></div></div>
-
+</div>
 
 <!-- footer -->
 <!-- footer -->

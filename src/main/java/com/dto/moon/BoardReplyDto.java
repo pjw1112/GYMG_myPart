@@ -12,7 +12,8 @@ public class BoardReplyDto {
 	private int board_no;
 	private int user_no;
 	private String reply_time;
-	private int reply_nick;
+	private String reply_content;
+	private String reply_nick;
 	private String reply_ip;
 	
 }

@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-%>
+
 <%@ include file="../inc/header.jsp"%>
 <div class="container">
 	<section class="rest-img-box">
@@ -94,10 +94,10 @@
 		</section>
 		<section class="rest-social">
 			<div class="social-item">
-				<span>리뷰 (132)</span>
+				<span>리뷰 (${list.get(0).review_cnt})</span>
 				<div class="icon-container">
 					<img src="${pageContext.request.contextPath}//images/star_icon.svg"
-						alt="" /><span>3.5</span>
+						alt="" /><span>${list.get(0).review_avg}</span>
 				</div>
 			</div>
 			<div class="social-item">
@@ -105,7 +105,7 @@
 					<span>좋아요</span>
 					<div class="icon-container">
 						<div class="heart-img"></div>
-						<span>354</span>
+						<span>${list.get(0).rest_like_cnt}</span>
 					</div>
 				</button>
 			</div>
@@ -143,5 +143,43 @@
 			$('.heart-like').toggleClass('active');
 		})
 	})
+</script>
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=e6b5214426df989a43073f46ca3e2ca9&libraries=services"></script>
+<script>
+var mapContainer = document.querySelector('.rest-map'), // 지도를 표시할 div 
+    mapOption = {
+        center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
+        level: 3 // 지도의 확대 레벨
+    };  
+
+// 지도를 생성합니다    
+var map = new kakao.maps.Map(mapContainer, mapOption); 
+
+// 주소-좌표 변환 객체를 생성합니다
+var geocoder = new kakao.maps.services.Geocoder();
+
+// 주소로 좌표를 검색합니다
+geocoder.addressSearch('${list.get(0).rest_address}', function(result, status) {
+    // 정상적으로 검색이 완료됐으면 
+     if (status === kakao.maps.services.Status.OK) {
+
+        var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+
+        // 결과값으로 받은 위치를 마커로 표시합니다
+        var marker = new kakao.maps.Marker({
+            map: map,
+            position: coords
+        });
+
+        // 인포윈도우로 장소에 대한 설명을 표시합니다
+        var infowindow = new kakao.maps.InfoWindow({
+            content: '<div style="width:150px; text-align:center;padding:6px 0;">${list.get(0).rest_name}</div>'
+        });
+        infowindow.open(map, marker);
+
+        // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
+        map.setCenter(coords);
+    } 
+});    
 </script>
 <%@ include file="../inc/footer.jsp"%>

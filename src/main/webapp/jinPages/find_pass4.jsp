@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
+ <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 
 <%@ include file="../inc/header.jsp"%>
@@ -39,7 +39,7 @@ li {
 
 .toptier_box {
 	width: 900px;
-	height: 560px;
+	height: 510px;
 	border: 4px solid #FD9B36;
 	border-radius: 0 0 40px 40px;
 	margin: 0 auto;
@@ -72,7 +72,7 @@ li {
 	height: 310px;
 	margin: 0 auto;
 	display: grid;
-	grid-template-columns: 1fr 2fr 1fr;
+	grid-template-columns: 1fr 2fr 0.8fr;
 	grid-template-rows: 1fr 1fr 1fr 1fr;
 	grid-gap: 20px;
 }
@@ -126,42 +126,29 @@ label {
 	text-align: center;
 	float: left;
 	line-height: 142px;
-	cursor: pointer;
+	cursor : pointer;
 }
 
 .topbox_section1 {
 	border-right: 4px solid #FD9B36;
 	border-radius: 36px 0 0 0;
+	
+	
+}
+
+.topbox_section2 {
+	/*border-right: 4px solid #FD9B36;*/
+	width : 449px;
+	border-radius: 0 36px 0 0;
 	font-weight: bold;
 	background-color: #ffcf9e;
 }
 
-.topbox_section2 {
-	
-}
-
-.your_id {
-	width: 600px;
-	height: 290px;
-	border: 2px solid #d3d3d3;
-	border-radius : 20px;
-	margin: 0 auto;
-	margin-bottom: 50px;
-	
-}
-
-.message_box {
-	text-align: center;
-	margin-top : 60px;
-	font-size: 20px;
-	line-height : 50px;
-	/*border: 2px solid #d3d3d3;*/
+ input::placeholder {
+  color: #rgb(83, 81, 81);
 }
 .result_id{
 	color : #FD9B36;
-	font-weight: bold;
-	font-size : 30px;
-	line-height : 70px;
 }
 </style>
 <div class="container">
@@ -175,38 +162,48 @@ label {
 		<a href="GoToFind_pass1Page.jin"><div class="topbox_section2 topbox">비밀번호 찾기</div></a>
 	</div>
 	<div class="toptier_box">
-		<div class="your_id">
-			<div class="message_box">
-				<p>회원님의 아이디는</p> 
-				<p class="result_id">${find_id_result}</p>
-				<p>입니다.</p>
-			</div>
-		</div>
 		<div class="inner_container">
 
+			
+				<div class="main_form">
+					<div class="item column1"></div>
+					<div class="item column2 mygray"><br>
+					<div class="item column3"></div>
+					<!-- #################################################### -->
 
-			<div class="main_form">
-
-
-				<!-- #################################################### -->
-				<!-- #################################################### -->
-
-				<div class="item column1"></div>
-
-				<!-- #################################################### -->
-				<!-- #################################################### -->
-
-
-				<div class="item column2">
-					<button type="button" class="btn btn-warning btn-block">
-					<a href="GoToLoginPage.jin">로그인하러 가기</a>
-					</button>
+					<div class="item column1"></div>
+					<div class="item column2"><img alt="" src="${pageContext.request.contextPath}/images/not_find_id.gif">
 				</div>
+					<div class="item column3"></div>
+					<!-- #################################################### -->
+					<!-- #################################################### -->
+					<!-- #################################################### -->
+					<div class="item column1"></div>
+					<div class="item column2">
+					<h1>처리과정에 실패 했습니다</h1>
+				
+				
+					</div>
+					<div class="item column3"></div>
+					<!-- #################################################### -->
+					<div class="item column1"></div>
+					<div class="item column2"><p>입력 정보를 다시 확인해주세요</p></div>
+					<div class="item column3"></div>
+					
+					
+					<!-- #################################################### -->
 
-				<!-- #################################################### -->
 
-			</div>
 
+					<div class="item column1"></div>
+					<div class="item column2">
+						<a href="javascript:history.back()" class="btn btn-warning btn-block">뒤로 가기</a>
+					</div>
+					<div class="item column3"></div>
+					<!-- #################################################### -->
+
+				</div>
+			
 		</div>
 	</div>
 </div>

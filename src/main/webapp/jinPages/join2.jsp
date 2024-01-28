@@ -33,7 +33,7 @@ li {
 
 .join_container {
 	/* border: 1px solid red; */
-	width: 1440px;
+	width: 100%;
 	height: 1500px;
 	padding: 100px 0;
 }
@@ -283,7 +283,7 @@ label {
 	top: 80px;
 	left: 10px;
 	background-color: white;
-	border-radius: 15px;
+	
 }
 
 .location_row1 {
@@ -326,8 +326,12 @@ label {
 /* location 선택 창 관련 CSS */
 /* location 선택 창 관련 CSS */
 /* location 선택 창 관련 CSS */
-</style>
 
+input[type='email']::placeholder {
+	color: #cccccc;
+}
+</style>
+<div class="container">
 <div class="join_container">
 
 	<div class="login_box">
@@ -343,7 +347,7 @@ label {
 					</div>
 					<div class="item column2 id_check">
 						<input type="email" id="user_id" name="user_id"
-							class="form-control middle_input" placeholder="abc@def.com">
+							class="form-control middle_input" placeholder="nicetomeetyou@welcome.com">
 						<label for="user_id" class="check_message"></label>
 					</div>
 					<div class="item column3">
@@ -356,12 +360,12 @@ label {
 					</div>
 					<div class="item column2 name_check">
 						<input type="text" id="user_name" name="user_name"
-							class="form-control middle_input"> <label for="user_name"
-							class="check_message"></label>
+							class="form-control middle_input"> 
+							<label for="user_name" class="check_message"></label>
 					</div>
 					<div class="item column3"></div>
 					<!-- #################################################### -->
-
+					<!-- #################################################### -->
 					<div class="item column1">
 						<label for="user_nick" class="form-label">* 닉네임</label>
 					</div>
@@ -480,7 +484,7 @@ label {
 		</div>
 	</div>
 </div>
-
+</div>
 
 <script>
 let id_ok = false;
@@ -1117,6 +1121,11 @@ join_form.addEventListener('submit', function(event) {
 	}
 	if(!pass_ok ){
 		alert("pass 입력을 확인해주세요.");
+		
+		return;
+	}
+	if(!pass2_ok ){
+		alert("pass2 입력을 확인해주세요.");
 		
 		return;
 	}

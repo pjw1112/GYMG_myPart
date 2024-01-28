@@ -62,7 +62,21 @@
 			success : function(data) {
 
 				if (data == "2000") {
-					console.log("remember_login : 쿠키 로그인 성공");
+
+					let aa =""+"${empty sessionScope.login_user_dto}";
+					console.log(aa);
+					console.log(typeof(aa));
+					if(aa.trim()=="true"){
+						location.href="index.ye";
+					}
+					
+					
+					
+					
+					
+					
+					
+					
 				}
 
 			}
@@ -99,10 +113,12 @@
 </head>
 
 <body>
-	<div class="main_container">
+	
+	
+	
 		<header>
 			<div class="header_column1 header_column">
-				<a href="GoToMain.jin">가봄, 맛봄<img alt="가봄,맛봄"
+				<a href="index.ye">가봄, 맛봄<img alt="가봄,맛봄"
 					src="${pageContext.request.contextPath}/images/spoon.svg"></a>
 			</div>
 			<div class="header_column2 header_column">
@@ -111,7 +127,7 @@
 					<c:when test="${empty sessionScope.login_user_dto}">
 						<!-- 로그인이 되어있지 않은 경우 -->
 						<div class="item_inColumn2 ">
-							<a href="#">맛봄찾기</a>
+							<a href="searchResult.ye?ctg_no=&searchKey=">맛봄찾기</a>
 						</div>
 						<div class="item_inColumn2 ">
 							<a href="board_list.moon?ctg_no=1">자유게시판</a>
@@ -139,7 +155,7 @@
 							<c:when test="${sessionScope.login_user_dto.type_no == 2}">
 
 								<div class="item_inColumn2 ">
-									<a href="#">맛봄찾기</a>
+									<a href="searchResult.ye?ctg_no=&searchKey=">맛봄찾기</a>
 								</div>
 								<div class="item_inColumn2 ">
 									<a href="board_list.moon?ctg_no=1">자유게시판</a>
@@ -148,7 +164,7 @@
 									<a href="board_list.moon?ctg_no=2">맛집게시판</a>
 								</div>
 								<div class="item_inColumn2 ">
-									<a href="#">가볼,맛볼</a>
+									<a href="searchResult.ye?ctg_no=&searchKey=">가볼,맛볼</a>
 								</div>
 
 							</c:when>
@@ -193,7 +209,7 @@
 								</c:when>
 								<c:when test="${sessionScope.login_user_dto.type_no == 2}">
 									<strong>${sessionScope.login_user_dto.user_name}</strong> 님 | 
-							<a href="GoToMyPage.jin" class="header_session_btn"><strong>MY</strong></a> |
+							<a href="GoToMic_tab1Page.jin" class="header_session_btn"><strong>MY</strong></a> |
 							<a href="user_logout.jin" class="header_session_btn"><strong>Log
 											Out</strong></a>
 								</c:when>
@@ -210,6 +226,7 @@
 			</div>
 
 		</header>
+		
 		<!-- 여기 위로 1HEADER -->
 		<!-- 여기 위로 HEADER -->
 		<!-- 여기 위로 HEADER -->
